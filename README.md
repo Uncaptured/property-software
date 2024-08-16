@@ -1,8 +1,4 @@
-# real-estate
-
-Hold the projects for the real estate project
-
-## flutter_real_estate
+# flutter_real_estate
 
 A new Flutter project.
 
