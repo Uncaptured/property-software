@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_real_estate/constants.dart';
 
 
 class DashboardLink extends StatelessWidget {
@@ -27,7 +28,7 @@ class DashboardLink extends StatelessWidget {
           vertical: 10
         ),
         decoration: BoxDecoration(
-          color: isActive ? Colors.grey.withOpacity(0.4) : Colors.transparent,
+          color: isActive ? khoverColor : Colors.transparent,
           borderRadius: BorderRadius.circular(15)
         ),
         child: Row(
@@ -36,15 +37,15 @@ class DashboardLink extends StatelessWidget {
             // icon
             Icon(
               icon,
-              color: Colors.white,),
+              color: Colors.grey.shade300,),
 
             const SizedBox(width: 10,),
 
             // text
             Text(
               text,
-              style: const TextStyle(
-                color: Colors.white,
+              style:  TextStyle(
+                color: Colors.grey.shade200,
               ),
             ),
 

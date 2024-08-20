@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
 
-class PropertyFragment extends StatelessWidget {
-  PropertyFragment({super.key});
+class LeaseFragment extends StatelessWidget {
+  LeaseFragment({super.key});
 
-  final TextEditingController searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -33,7 +33,7 @@ class PropertyFragment extends StatelessWidget {
 
                       // Text
                       const Text(
-                        "Property",
+                        "Lease",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
@@ -55,8 +55,8 @@ class PropertyFragment extends StatelessWidget {
                     ],
                   ),
 
-                  MyNewPinkButton(width: 200, title: "+ New Property", onPressFunction: (){}),
 
+                  MyNewPinkButton(width: 200, title: "+ New Lease", onPressFunction: (){}),
                 ],
               ),
             ),
@@ -113,24 +113,34 @@ class PropertyFragment extends StatelessWidget {
                 child: DataTable(
                     columns: const [
                       DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Type", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Address", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Total Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("start-Date", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("End-Date", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Property-Name", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Unity-No", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Duration", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Ammount", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Attach", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
                     ],
                     rows: [
                       DataRow(cells: [
                         const DataCell(Text('1')),
-                        const DataCell(Text('Samora Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Posta, Dar-es-salaam')),
-                        const DataCell(Text('20')),
-                        const DataCell(Text('14:56 15-08-2024')),
+                        const DataCell(Text('12-10-2024')),
+                        const DataCell(Text('12-4-2025')),
+                        const DataCell(Text('Samora Tower', overflow: TextOverflow.ellipsis,)),
+                        const DataCell(Text('L56')),
+                        const DataCell(Text('6 Years')),
+                        const DataCell(Text('\$670')),
+                        DataCell(
+                          IconButton(
+                            onPressed: (){},
+                            icon: const Icon( Icons.insert_drive_file_sharp, color: Colors.lightBlue, size: 17,),
+                          ),
+                        ),
+                        const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
                         DataCell(Row(
                           children: [
-
                             // view btn
                             IconButton(
                               onPressed: (){},
@@ -151,17 +161,24 @@ class PropertyFragment extends StatelessWidget {
                               icon: const Icon(Icons.delete),
                               color: Colors.redAccent,
                             ),
-
                           ],
                         )),
                       ]),
                       DataRow(cells: [
                         const DataCell(Text('2')),
-                        const DataCell(Text('Mwanga Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Makumbusho, Dar-es-salaam')),
+                        const DataCell(Text('12-09-2024')),
+                        const DataCell(Text('12-03-2025')),
+                        const DataCell(Text('Mwanga Tower', overflow: TextOverflow.ellipsis,)),
                         const DataCell(Text('32')),
-                        const DataCell(Text('15:56 15-05-2024')),
+                        const DataCell(Text('6 Years')),
+                        const DataCell(Text('\$650')),
+                        DataCell(
+                          IconButton(
+                            onPressed: (){},
+                            icon: const Icon( Icons.insert_drive_file_sharp, color: Colors.lightBlue, size: 17,),
+                          ),
+                        ),
+                        const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
                         DataCell(Row(
                           children: [
 
@@ -198,6 +215,6 @@ class PropertyFragment extends StatelessWidget {
           ],
         ),
       ),
-    );
+    );;
   }
 }

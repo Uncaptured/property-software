@@ -1,5 +1,9 @@
 // import 'dart:html';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_real_estate/components/pink_new_button.dart';
+import 'package:flutter_real_estate/constants.dart';
 
 class TenantFragment extends StatelessWidget {
   TenantFragment({super.key});
@@ -8,7 +12,6 @@ class TenantFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Expanded(
       child: Padding(
@@ -45,7 +48,7 @@ class TenantFragment extends StatelessWidget {
                         width: 50,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.pink.shade400,
+                          color: kbuttonNewColor,
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
@@ -54,27 +57,12 @@ class TenantFragment extends StatelessWidget {
                   ),
 
 
-                  ElevatedButton(
-                    onPressed: (){},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink.shade400,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 18,
-                        horizontal: 30
-                      )
-                    ),
-                    child: const Text(
-                      "+ Create New",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: Colors.white
-                      ),
-                    )
-                  ),
+                  MyNewPinkButton(width: 200, title: "+ New Tenant", onPressFunction: (){}),
+
                 ],
               ),
             ),
+
 
       
             // Divider line
@@ -88,28 +76,96 @@ class TenantFragment extends StatelessWidget {
       
             const SizedBox(height: 20,),
       
-      
+
             // Search Box
             Container(
+              width: 500,
+              height: 50,
               decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(30)
               ),
-              child: SizedBox(
-                child: TextField(
-                  controller: searchController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: "Search",
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Icon(Icons.search),
-                    ),
+              child: TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: "Search",
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Icon(Icons.search),
                   ),
                 ),
               ),
             ),
-      
+
+            const SizedBox(height: 20,),
+
+            //  tables
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("Tenant Name", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("SQM", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("Ammount", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("Status", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
+                    DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
+                  ],
+                  rows: [
+                      DataRow(cells: [
+                        const DataCell(Text('1')),
+                        const DataCell(Text('Vallerian Mchau')),
+                        const DataCell(Text('705')),
+                        const DataCell(Text('156x266')),
+                        const DataCell(Text('\$500')),
+                        const DataCell(Text('Paid',  style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: CupertinoColors.activeGreen
+                            ),
+                          )
+                        ),
+                        const DataCell(Text('14:56 15-08-2024')),
+                        DataCell(Row(
+                          children: [
+                            // view btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.remove_red_eye),
+                              color: CupertinoColors.systemBlue,
+                            ),
+
+                            // update btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.mode_edit_outline),
+                              color: CupertinoColors.systemGreen,
+                            ),
+
+                            // delete btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.delete),
+                              color: Colors.redAccent,
+                            ),
+                          ],
+                        )),
+                      ]),
+                  ]
+                ),
+              ),
+            ),
+
+
       
           ],
         ),

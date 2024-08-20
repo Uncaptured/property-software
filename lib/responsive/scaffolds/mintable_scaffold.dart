@@ -9,14 +9,14 @@ import 'package:flutter_real_estate/fragments/settings_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
 
-class MobileScaffold extends StatefulWidget {
-  const MobileScaffold({super.key});
+class MinTabletScaffold extends StatefulWidget {
+  const MinTabletScaffold({super.key});
 
   @override
-  State<MobileScaffold> createState() => _MobileScaffoldState();
+  State<MinTabletScaffold> createState() => _MinTabletScaffoldState();
 }
 
-class _MobileScaffoldState extends State<MobileScaffold> {
+class _MinTabletScaffoldState extends State<MinTabletScaffold> {
   int pageIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 

@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
 
-class PropertyFragment extends StatelessWidget {
-  PropertyFragment({super.key});
 
-  final TextEditingController searchController = TextEditingController();
+class UnityFragment extends StatelessWidget {
+  UnityFragment({super.key});
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -33,7 +34,7 @@ class PropertyFragment extends StatelessWidget {
 
                       // Text
                       const Text(
-                        "Property",
+                        "Unity",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
@@ -55,7 +56,8 @@ class PropertyFragment extends StatelessWidget {
                     ],
                   ),
 
-                  MyNewPinkButton(width: 200, title: "+ New Property", onPressFunction: (){}),
+
+                  MyNewPinkButton(width: 200, title: "+ New Unity", onPressFunction: (){}),
 
                 ],
               ),
@@ -113,58 +115,27 @@ class PropertyFragment extends StatelessWidget {
                 child: DataTable(
                     columns: const [
                       DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Type", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Address", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Total Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("SQM", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Baths", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Beds", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Price", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
                     ],
                     rows: [
                       DataRow(cells: [
                         const DataCell(Text('1')),
+                        const DataCell(Text('705')),
                         const DataCell(Text('Samora Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Posta, Dar-es-salaam')),
-                        const DataCell(Text('20')),
+                        const DataCell(Text('156x266')),
+                        const DataCell(Text('2')),
+                        const DataCell(Text('4')),
+                        const DataCell(Text('\$500')),
                         const DataCell(Text('14:56 15-08-2024')),
                         DataCell(Row(
                           children: [
-
-                            // view btn
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(Icons.remove_red_eye),
-                              color: CupertinoColors.systemBlue,
-                            ),
-
-                            // update btn
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(Icons.mode_edit_outline),
-                              color: CupertinoColors.systemGreen,
-                            ),
-
-                            // delete btn
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(Icons.delete),
-                              color: Colors.redAccent,
-                            ),
-
-                          ],
-                        )),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text('2')),
-                        const DataCell(Text('Mwanga Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Makumbusho, Dar-es-salaam')),
-                        const DataCell(Text('32')),
-                        const DataCell(Text('15:56 15-05-2024')),
-                        DataCell(Row(
-                          children: [
-
                             // view btn
                             IconButton(
                               onPressed: (){},

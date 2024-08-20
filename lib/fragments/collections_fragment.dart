@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
 
-class PropertyFragment extends StatelessWidget {
-  PropertyFragment({super.key});
+class CollectionFragment extends StatelessWidget {
+  CollectionFragment({super.key});
 
-  final TextEditingController searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -33,7 +33,7 @@ class PropertyFragment extends StatelessWidget {
 
                       // Text
                       const Text(
-                        "Property",
+                        "Collections",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
@@ -55,8 +55,7 @@ class PropertyFragment extends StatelessWidget {
                     ],
                   ),
 
-                  MyNewPinkButton(width: 200, title: "+ New Property", onPressFunction: (){}),
-
+                  MyNewPinkButton(width: 200, title: "+ New Collection", onPressFunction: (){}),
                 ],
               ),
             ),
@@ -99,7 +98,6 @@ class PropertyFragment extends StatelessWidget {
 
             const SizedBox(height: 20,),
 
-
             //  tables
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -114,23 +112,20 @@ class PropertyFragment extends StatelessWidget {
                     columns: const [
                       DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Type", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Address", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Total Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Type", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Status", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
                     ],
                     rows: [
                       DataRow(cells: [
                         const DataCell(Text('1')),
-                        const DataCell(Text('Samora Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Posta, Dar-es-salaam')),
-                        const DataCell(Text('20')),
-                        const DataCell(Text('14:56 15-08-2024')),
+                        const DataCell(Text('Samora Tower', overflow: TextOverflow.ellipsis,)),
+                        const DataCell(Text('Lease (U-105)')),
+                        const DataCell(Text('Paid')),
+                        const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
                         DataCell(Row(
                           children: [
-
                             // view btn
                             IconButton(
                               onPressed: (){},
@@ -151,20 +146,17 @@ class PropertyFragment extends StatelessWidget {
                               icon: const Icon(Icons.delete),
                               color: Colors.redAccent,
                             ),
-
                           ],
                         )),
                       ]),
                       DataRow(cells: [
                         const DataCell(Text('2')),
-                        const DataCell(Text('Mwanga Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Makumbusho, Dar-es-salaam')),
-                        const DataCell(Text('32')),
-                        const DataCell(Text('15:56 15-05-2024')),
+                        const DataCell(Text('Uncaptured Tower', overflow: TextOverflow.ellipsis,)),
+                        const DataCell(Text('Maintenance (Water pipe)')),
+                        const DataCell(Text('Paid')),
+                        const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
                         DataCell(Row(
                           children: [
-
                             // view btn
                             IconButton(
                               onPressed: (){},
@@ -198,6 +190,6 @@ class PropertyFragment extends StatelessWidget {
           ],
         ),
       ),
-    );
+    );;
   }
 }
