@@ -12,35 +12,24 @@ class DashboardFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      if(constraints.maxWidth < 500){
-
+      if (constraints.maxWidth < 500) {
         return SingleChildScrollView(
           scrollDirection: Axis.vertical,
           physics: const BouncingScrollPhysics(),
-          child: Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: DashboardContents(onSelectPage: onSelectPage),
-            ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: DashboardContents(onSelectPage: onSelectPage),
           ),
         );
-
       }
 
-      return Expanded(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: DashboardContents(onSelectPage: onSelectPage),
-        ),
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: DashboardContents(onSelectPage: onSelectPage),
       );
-
     });
   }
 }
-
-
-
-
 
 class DashboardContents extends StatelessWidget {
   const DashboardContents({
@@ -55,7 +44,6 @@ class DashboardContents extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         // head
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -75,57 +63,44 @@ class DashboardContents extends StatelessWidget {
             ),
           ),
         ),
-
-
         // divider line
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 15),
           child: Container(
             height: 1,
             decoration: BoxDecoration(color: Colors.grey.shade400),
           ),
         ),
-
-
         // row - boxes
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Wrap(
-            spacing: 20, // Horizontal spacing between items
-            runSpacing: 20, // Vertical spacing between lines
-            children: [
-
-              BoxProgress(
-                title: "Collections",
-                count: 20,
-                icon: Icons.monetization_on,
-                onTapFunction: () => onSelectPage(5), // Navigate to Collections
-              ),
-
-              BoxProgress(
-                title: "Maintenance Request",
-                count: 40,
-                icon: Icons.build,
-                onTapFunction: () => onSelectPage(6), // Navigate to Maintenance
-              ),
-
-              BoxProgress(
-                title: "Tenants",
-                count: 10,
-                icon: Icons.people,
-                onTapFunction: () => onSelectPage(3), // Navigate to Tenants
-              ),
-
-            ],
-          ),
+        Wrap(
+          spacing: 30, // Horizontal spacing between items
+          runSpacing: 30, // Vertical spacing between lines
+          children: [
+            BoxProgress(
+              title: "Collections",
+              count: 20,
+              icon: Icons.monetization_on,
+              onTapFunction: () => onSelectPage(5), // Navigate to Collections
+            ),
+            BoxProgress(
+              title: "Maintenance Request",
+              count: 40,
+              icon: Icons.build,
+              onTapFunction: () => onSelectPage(6), // Navigate to Maintenance
+            ),
+            BoxProgress(
+              title: "Tenants",
+              count: 10,
+              icon: Icons.people,
+              onTapFunction: () => onSelectPage(3), // Navigate to Tenants
+            ),
+          ],
         ),
-
       ],
     );
   }
 }
+
 
 
 
@@ -150,7 +125,7 @@ class BoxProgress extends StatelessWidget {
         double containerWidth = constraints.maxWidth;
 
         if (containerWidth < 620) {
-          containerWidth = containerWidth * 0.8; // Adjust to available space
+          containerWidth = containerWidth * 0.67; // Adjust to available space
         } else {
           containerWidth = 300; // Fixed width for larger screens
         }

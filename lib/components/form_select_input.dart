@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_real_estate/API_services/roles_services.dart';
 
 class MyFormSelectInput extends StatefulWidget {
   final TextEditingController controller;
   final IconData icon;
   final bool isPassword;
   final String title;
+  final Future<List<String>> rolesFuture; // Accept the roles future
 
   const MyFormSelectInput({
     super.key,
@@ -13,37 +13,27 @@ class MyFormSelectInput extends StatefulWidget {
     required this.controller,
     required this.isPassword,
     required this.title,
+    required this.rolesFuture,
   });
 
   @override
-  State<MyFormSelectInput> createState() => _MyFormSelectInput();
+  State<MyFormSelectInput> createState() => _MyFormSelectInputState();
 }
 
-class _MyFormSelectInput extends State<MyFormSelectInput> {
-  String? selectedRole; // Initialize this variable outside the build method
-
-  late Future<List<String>> _rolesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _rolesFuture = allRoles(context);
-  }
+class _MyFormSelectInputState extends State<MyFormSelectInput> {
+  String? selectedRole;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
-      padding: const EdgeInsets.symmetric(
-        vertical: 0,
-        horizontal: 20,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.15),
         borderRadius: BorderRadius.circular(15),
       ),
       child: FutureBuilder<List<String>>(
-        future: _rolesFuture,
+        future: widget.rolesFuture, // Use the provided roles future
         builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();

@@ -3,7 +3,6 @@ import 'package:flutter_real_estate/constants.dart';
 
 
 class DashboardLink extends StatelessWidget {
-
   final IconData icon;
   final String text;
   final bool isActive;
@@ -14,7 +13,7 @@ class DashboardLink extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.isActive,
-    required this.changeIndex
+    required this.changeIndex,
   });
 
   @override
@@ -25,7 +24,7 @@ class DashboardLink extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 9),
         padding: const EdgeInsets.symmetric(
           horizontal: 12,
-          vertical: 10
+          vertical: 10,
         ),
         decoration: BoxDecoration(
           color: isActive ? khoverColor : Colors.transparent,
@@ -45,6 +44,16 @@ class DashboardLink extends StatelessWidget {
             Text(
               text,
               style:  TextStyle(
+              color: Colors.grey.shade300,
+            ),
+            ),
+
+            const SizedBox(width: 10),
+
+            // text
+            Text(
+              text,
+              style: TextStyle(
                 color: Colors.grey.shade200,
               ),
             ),

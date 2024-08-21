@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
+import 'package:flutter_real_estate/constants.dart';
 import 'package:flutter_real_estate/fragments/collections_fragment.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/lease_fragment.dart';
@@ -8,6 +9,16 @@ import 'package:flutter_real_estate/fragments/property_fragment.dart';
 import 'package:flutter_real_estate/fragments/settings_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
+
+// class TabletScaffold extends StatelessWidget {
+//   const TabletScaffold({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold(
+//       backgroundColor: Colors.blue,
+
+
 
 class TabletScaffold extends StatefulWidget {
   const TabletScaffold({super.key});
@@ -24,6 +35,14 @@ class _TabletScaffoldState extends State<TabletScaffold> {
     setState(() {
       pageIndex = index;
     });
+  }
+
+  void _showDialogCreateNew(){
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (context) => const MyCreateNewDialog(),
+    );
   }
 
   @override
@@ -64,7 +83,7 @@ class _TabletScaffoldState extends State<TabletScaffold> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: MyNewPinkButton(
-                onPressFunction: () {},
+                onPressFunction: _showDialogCreateNew,
                 width: 300,
                 title: '+ Create New',
               ),
@@ -126,7 +145,7 @@ class _TabletScaffoldState extends State<TabletScaffold> {
                   ),
 
                  SizedBox(
-                   height: MediaQuery.of(context).size.height * 0.5,
+                   height: MediaQuery.of(context).size.height * 0.19,
                  ),
 
                  _buildDrawerItem(
@@ -173,3 +192,148 @@ class _TabletScaffoldState extends State<TabletScaffold> {
     );
   }
 }
+
+
+
+
+class MyCreateNewDialog extends StatefulWidget {
+  const MyCreateNewDialog({super.key});
+
+  @override
+  State<MyCreateNewDialog> createState() => _MyCreateNewDialogState();
+}
+
+class _MyCreateNewDialogState extends State<MyCreateNewDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 100), // Padding on sides
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.77,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 50,
+                ), // Internal padding
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    // Head
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+
+                          // Text
+                          const Text(
+                            "Create New",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
+                          ),
+
+
+                          // Color mark
+                          Container(
+                            width: 50,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: kbuttonNewColor,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+
+
+                        ],
+                      ),
+                    ),
+
+                    // Divider line
+                    Container( // Make it take the full width
+                      height: 1,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+
+                    const SizedBox(height: 30,),
+
+                    Wrap(
+                      spacing: 40, // Horizontal space between columns
+                      runSpacing: 40, // Vertical space between rows
+                      children: [
+                        buildColumn("Property", [
+                          buildIconButton(Icons.apartment, "Add New Property", (){}),
+                        ]),
+                        buildColumn("People", [
+                          buildIconButton(Icons.people, "Add New User", (){}),
+                          buildIconButton(Icons.people, "Add New Tenant", (){}),
+                        ]),
+                        buildColumn("Collections", [
+                          buildIconButton(Icons.monetization_on, "Add Collection", (){}),
+                        ]),
+                        buildColumn("Maintenance", [
+                          buildIconButton(Icons.build, "New Request", (){}),
+                        ]),
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
+  // Column Button
+  Widget buildColumn(String title, List<Widget> buttons) {
+    return SizedBox(
+      width: 200, // Adjust width to fit your design needs
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          const SizedBox(height: 10),
+          ...buttons, // Add the list of buttons to the column
+        ],
+      ),
+    );
+  }
+
+
+
+  // Helper method to create an icon button with text
+  Widget buildIconButton(IconData icon, String text, Function()? onTapFunction) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: GestureDetector(
+        onTap: onTapFunction,
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.black54),
+            const SizedBox(width: 10),
+            Text(
+              text,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

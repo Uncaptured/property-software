@@ -10,17 +10,15 @@ class PropertyFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            vertical: 10.0,
-            horizontal: 30.0
+          vertical: 10.0,
+          horizontal: 30.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // Head
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
@@ -30,7 +28,6 @@ class PropertyFragment extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       // Text
                       const Text(
                         "Property",
@@ -39,8 +36,6 @@ class PropertyFragment extends StatelessWidget {
                           fontSize: 25,
                         ),
                       ),
-
-
                       // Color mark
                       Container(
                         width: 50,
@@ -50,38 +45,31 @@ class PropertyFragment extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-
-
                     ],
                   ),
-
-                  MyNewPinkButton(width: 200, title: "+ New Property", onPressFunction: (){}),
-
+                  MyNewPinkButton(
+                    width: 200,
+                    title: "+ New Property",
+                    onPressFunction: () {},
+                  ),
                 ],
               ),
             ),
-
-
-
             // Divider line
-            Container( // Make it take the full width
+            Container(
               height: 1,
               decoration: BoxDecoration(
                 color: Colors.grey.shade500,
               ),
             ),
-
-
-            const SizedBox(height: 20,),
-
-
+            const SizedBox(height: 20),
             // Search Box
             Container(
               width: 500,
               height: 50,
               decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(30)
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(30),
               ),
               child: TextField(
                 controller: searchController,
@@ -95,12 +83,8 @@ class PropertyFragment extends StatelessWidget {
                 ),
               ),
             ),
-
-
-            const SizedBox(height: 20,),
-
-
-            //  tables
+            const SizedBox(height: 20),
+            // Table
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
@@ -111,90 +95,113 @@ class PropertyFragment extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Type", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Address", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Total Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
-                    ],
-                    rows: [
-                      DataRow(cells: [
-                        const DataCell(Text('1')),
-                        const DataCell(Text('Samora Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Posta, Dar-es-salaam')),
-                        const DataCell(Text('20')),
-                        const DataCell(Text('14:56 15-08-2024')),
-                        DataCell(Row(
+                  columns: const [
+                    DataColumn(
+                      label: Text(
+                        "#",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Property Name",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Property Type",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Property Address",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Total Unity",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Created_at",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Actions",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                  rows: [
+                    DataRow(cells: [
+                      const DataCell(Text('1')),
+                      const DataCell(Text('Samora Tower')),
+                      const DataCell(Text('Business')),
+                      const DataCell(Text('Posta, Dar-es-salaam')),
+                      const DataCell(Text('20')),
+                      const DataCell(Text('14:56 15-08-2024')),
+                      DataCell(
+                        Row(
                           children: [
-
-                            // view btn
                             IconButton(
-                              onPressed: (){},
+                              onPressed: () {},
                               icon: const Icon(Icons.remove_red_eye),
                               color: CupertinoColors.systemBlue,
                             ),
-
-                            // update btn
                             IconButton(
-                              onPressed: (){},
+                              onPressed: () {},
                               icon: const Icon(Icons.mode_edit_outline),
                               color: CupertinoColors.systemGreen,
                             ),
-
-                            // delete btn
                             IconButton(
-                              onPressed: (){},
-                              icon: const Icon(Icons.delete),
-                              color: Colors.redAccent,
-                            ),
-
-                          ],
-                        )),
-                      ]),
-                      DataRow(cells: [
-                        const DataCell(Text('2')),
-                        const DataCell(Text('Mwanga Tower')),
-                        const DataCell(Text('Business')),
-                        const DataCell(Text('Makumbusho, Dar-es-salaam')),
-                        const DataCell(Text('32')),
-                        const DataCell(Text('15:56 15-05-2024')),
-                        DataCell(Row(
-                          children: [
-
-                            // view btn
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(Icons.remove_red_eye),
-                              color: CupertinoColors.systemBlue,
-                            ),
-
-                            // update btn
-                            IconButton(
-                              onPressed: (){},
-                              icon: const Icon(Icons.mode_edit_outline),
-                              color: CupertinoColors.systemGreen,
-                            ),
-
-                            // delete btn
-                            IconButton(
-                              onPressed: (){},
+                              onPressed: () {},
                               icon: const Icon(Icons.delete),
                               color: Colors.redAccent,
                             ),
                           ],
-                        )),
-                      ]),
-                    ]
+                        ),
+                      ),
+                    ]),
+                    DataRow(cells: [
+                      const DataCell(Text('2')),
+                      const DataCell(Text('Mwanga Tower')),
+                      const DataCell(Text('Business')),
+                      const DataCell(Text('Makumbusho, Dar-es-salaam')),
+                      const DataCell(Text('32')),
+                      const DataCell(Text('15:56 15-05-2024')),
+                      DataCell(
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.remove_red_eye),
+                              color: CupertinoColors.systemBlue,
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.mode_edit_outline),
+                              color: CupertinoColors.systemGreen,
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.delete),
+                              color: Colors.redAccent,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  ],
                 ),
               ),
             ),
-
-
-
           ],
         ),
       ),

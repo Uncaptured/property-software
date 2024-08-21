@@ -5,6 +5,7 @@ import 'package:flutter_real_estate/pages/splash_scaffolds/splash_mobile.dart';
 import 'package:flutter_real_estate/pages/splash_scaffolds/splash_tablet.dart';
 import 'package:flutter_real_estate/responsive/responsive_layout.dart';
 
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
