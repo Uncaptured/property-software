@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_real_estate/components/dashboard_link.dart';
 import 'package:flutter_real_estate/constants.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
+import 'package:flutter_real_estate/fragments/profile_fragment.dart';
 import 'package:flutter_real_estate/fragments/property_fragment.dart';
+import 'package:flutter_real_estate/fragments/role_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_real_estate/fragments/settings_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
 import '../../fragments/collections_fragment.dart';
+import '../../fragments/user_fragment.dart';
 
 class DesktopScaffold extends StatefulWidget {
   const DesktopScaffold({super.key});
@@ -39,7 +42,10 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
       LeaseFragment(),
       CollectionFragment(),
       MaintenanceFragment(),
-      SettingsFragment()
+      UserFragment(),
+      RoleFragment(),
+      SettingsFragment(),
+      ProfileFragment()
     ];
   }
 
@@ -80,11 +86,15 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
               children: [
 
                 const SizedBox(height: 18),
+
                 MyNewPinkButton(
                     width: 300,
                     title: "+ Create New",
-                    onPressFunction: () {}),
+                    onPressFunction: _showDialogCreateNew
+                ),
+
                 const SizedBox(height: 27),
+
                 DashboardLink(
                   icon: Icons.speed_outlined,
                   text: "Dashboard",
@@ -141,130 +151,42 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                     _selectPage(6);
                   },
                 ),
-                const Spacer(),
                 DashboardLink(
-                  icon: Icons.settings,
-                  text: "Settings",
-                  isActive: pageIndex == 7, // Active when pageIndex is 7
+                  icon: Icons.person,
+                  text: "Users",
+                  isActive: pageIndex == 7, // Active when pageIndex is 6
                   changeIndex: () {
                     _selectPage(7);
                   },
                 ),
                 DashboardLink(
-                  icon: Icons.account_circle,
-                  text: "Profile",
-                  isActive: pageIndex == 8, // Active when pageIndex is 8
+                  icon: Icons.account_tree,
+                  text: "Roles",
+                  isActive: pageIndex == 8, // Active when pageIndex is 6
                   changeIndex: () {
                     _selectPage(8);
                   },
                 ),
 
-                // Space
-                const SizedBox(
-                  height: 20,
-                ),
-
-                MyNewPinkButton(
-                    width: 300,
-                    title: "+ Create New",
-                    onPressFunction: _showDialogCreateNew,
-                ),
-
-                const SizedBox(
-                  height: 25,
-                ),
-
-                // Links (You can add more here)
-                DashboardLink(
-                  icon: Icons.speed_outlined,
-                  text: "Dashboard",
-                  isActive: active,
-                  changeIndex: () => {
-                    setState(() {
-                      pageIndex = 0;
-                    }),
-                  }
-                ),
-
-                DashboardLink(
-                  icon: Icons.warehouse_outlined,
-                  text: "Properties / Units",
-                  isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 1;
-                      }),
-                    }
-                ),
-
-                DashboardLink(
-                  icon: Icons.people_alt_outlined,
-                  text: "Tenants",
-                  isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 2;
-                      }),
-                    }
-                ),
-
-                DashboardLink(
-                  icon: Icons.insert_drive_file_sharp,
-                  text: "Lease",
-                    isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 3;
-                      }),
-                    }
-                ),
-
-                DashboardLink(
-                  icon: Icons.money,
-                  text: "Collections",
-                    isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 4;
-                      }),
-                    }
-                ),
-
-                DashboardLink(
-                  icon: Icons.build,
-                  text: "Maintenance",
-                    isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 5;
-                      }),
-                    }
-                ),
 
                 const Spacer(),
 
                 DashboardLink(
                   icon: Icons.settings,
                   text: "Settings",
-                    isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 6;
-                      }),
-                    }
+                  isActive: pageIndex == 9, // Active when pageIndex is 7
+                  changeIndex: () {
+                    _selectPage(9);
+                  },
                 ),
-
                 DashboardLink(
                   icon: Icons.account_circle,
                   text: "Profile",
-                    isActive: active,
-                    changeIndex: () => {
-                      setState(() {
-                        pageIndex = 7;
-                      }),
-                    }
+                  isActive: pageIndex == 10, // Active when pageIndex is 8
+                  changeIndex: () {
+                    _selectPage(10);
+                  },
                 ),
-
 
               ],
             ),

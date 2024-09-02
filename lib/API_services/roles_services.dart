@@ -6,7 +6,7 @@ Future<List<String>> allRoles(BuildContext context) async {
   const String baseUrl = "http://127.0.0.1:8000/api";
 
   try {
-    final response = await http.get(Uri.parse("$baseUrl/roles"));
+    final response = await http.get(Uri.parse("$baseUrl/auth-roles"));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -17,5 +17,4 @@ Future<List<String>> allRoles(BuildContext context) async {
   } catch (e) {
     throw Exception('Failed to load roles');
   }
-
 }

@@ -24,12 +24,33 @@ class _MinTabletLoginScaffoldState extends State<MinTabletLoginScaffold> {
   late AuthApiService authService;
   late Future<List<String>> _rolesFuture;
 
-  // Declare a future for roles
+  bool isLoading = true;  // To manage loading state
+
   @override
   void initState() {
     super.initState();
     authService = AuthApiService();
-    _rolesFuture = allRoles(context); // Ensure allRoles returns Future<List<String>>
+    _fetchRoles();  // Fetch roles when initializing the state
+  }
+
+  void _fetchRoles() async {
+    setState(() {
+      isLoading = true;  // Show loading indicator
+    });
+
+    _rolesFuture = allRoles(context);
+
+    // Await the roles and then hide the loading indicator
+    _rolesFuture.then((value) {
+      setState(() {
+        isLoading = false;  // Hide loading indicator once roles are fetched
+      });
+    }).catchError((error) {
+      setState(() {
+        isLoading = false;  // Hide loading indicator in case of error
+      });
+      showErrorMsg(context, "Failed to load roles");
+    });
   }
 
   // input controller
@@ -65,7 +86,11 @@ class _MinTabletLoginScaffoldState extends State<MinTabletLoginScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+      body: isLoading
+          ?
+            const Center(child: CircularProgressIndicator())
+          :
+      Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 40,
           vertical: 20,

@@ -23,7 +23,7 @@ class MyNewPinkButton extends StatelessWidget {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.pink.shade300,
+          backgroundColor: Colors.pink.shade400,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

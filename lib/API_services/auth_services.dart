@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_real_estate/models/auth_user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,10 +14,11 @@ class AuthApiService {
       body: jsonEncode(userRegisterData),
       headers: {'Content-Type': 'application/json'},
     );
+
     return response;
   }
 
-  // Login User and Store Token
+
   Future<http.Response> loginUser(Map<String, dynamic> loginUserData) async {
     final response = await http.post(
       Uri.parse("$baseUrl/login-user"),
@@ -25,18 +27,30 @@ class AuthApiService {
     );
 
     if (response.statusCode == 200) {
-      // Assuming the response body contains a JSON object with a token field
+      // Parse the response body
       final responseData = jsonDecode(response.body);
-      final token = responseData['token'];
 
-      // Store the token securely
+      final token = responseData['token'];
+      final userJson = responseData['staff'];
+
+      if (userJson != null && userJson is Map<String, dynamic>) {
+        AuthUser.instance.updateFromJson(userJson); // Update the singleton instance
+      } else {
+        print('Error: Invalid user data format');
+      }
+
+      // Store the token securely (if needed)
       await storage.write(key: 'auth_token', value: token);
+
+      print("Login successful. User data: ${AuthUser.instance.toJson()}"); // For debugging
+    } else {
+      print("Login failed. Status code: ${response.statusCode}");
     }
 
     return response;
   }
 
-  // Example of making an authenticated request using the stored token
+
   Future<http.Response> getProtectedData() async {
     final token = await storage.read(key: 'auth_token');
     final response = await http.get(
@@ -49,6 +63,7 @@ class AuthApiService {
     return response;
   }
 
+
   // Logout User and Clear Token
   Future<http.Response> logoutUser() async {
     final token = await storage.read(key: 'auth_token');
@@ -60,11 +75,27 @@ class AuthApiService {
       },
     );
 
-    // if(response.statusCode == 200){
-    //   await storage.delete(key: 'auth_token');
-    //   return response;
-    // }
+    // Delete the token if logout is successful
+    if (response.statusCode == 200) {
+      await storage.delete(key: 'auth_token');
+    }
 
     return response;
   }
+
+  // UPDATE USER DATA
+  Future<http.Response> updateUserData(userData) async {
+    final token = await storage.read(key: 'auth_token');
+    final response = await http.post(
+      Uri.parse("$baseUrl/update-user-profile"),
+      body: jsonEncode(userData),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    return response;
+  }
+
 }

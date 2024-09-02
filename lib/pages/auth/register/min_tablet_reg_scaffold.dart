@@ -1,30 +1,3 @@
-// import 'package:flutter/material.dart';
-//
-// class MinTabletRegScaffold extends StatelessWidget {
-//   const MinTabletRegScaffold({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//
-//     );
-//   }
-// }
-
-
-// import 'package:flutter/material.dart';
-//
-// class TabletRegScaffold extends StatelessWidget {
-//   const TabletRegScaffold({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//
-//     );
-//   }
-// }
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -118,13 +91,6 @@ class MinTabletRegScaffold extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-
-                  // Image.asset(
-                  //   'svgs/user-sitting-auth.png',
-                  //   fit: BoxFit.cover,
-                  //   width: MediaQuery.of(context).size.width * 0.17,
-                  //   height: 300,
-                  // ),
 
                   // const SizedBox(width: 20),
 

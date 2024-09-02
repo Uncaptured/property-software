@@ -21,7 +21,7 @@ class MobileLoginScaffold extends StatefulWidget {
 
 class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
   // INITIALIZE SERVICES && STORAGE
-  final authService = AuthApiService();
+  late AuthApiService authService;
   final storage = const FlutterSecureStorage();
 
   // Declare a future for roles
@@ -32,10 +32,33 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
   final TextEditingController _roleController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool isLoading = true;  // To manage loading state
+
   @override
   void initState() {
     super.initState();
-    _rolesFuture = allRoles(context); // Initialize roles fetching in initState
+    authService = AuthApiService();
+    _fetchRoles();  // Fetch roles when initializing the state
+  }
+
+  void _fetchRoles() async {
+    setState(() {
+      isLoading = true;  // Show loading indicator
+    });
+
+    _rolesFuture = allRoles(context);
+
+    // Await the roles and then hide the loading indicator
+    _rolesFuture.then((value) {
+      setState(() {
+        isLoading = false;  // Hide loading indicator once roles are fetched
+      });
+    }).catchError((error) {
+      setState(() {
+        isLoading = false;  // Hide loading indicator in case of error
+      });
+      showErrorMsg(context, "Failed to load roles");
+    });
   }
 
   // function LOGIN USER
@@ -66,7 +89,11 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+      body: isLoading
+      ?
+        const Center(child: CircularProgressIndicator())
+      :
+      Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 40,
           vertical: 25,

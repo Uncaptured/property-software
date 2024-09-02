@@ -1,538 +1,236 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_real_estate/API_services/all_properties_services.dart';
+import 'package:flutter_real_estate/API_services/all_tenants_service.dart';
+import 'package:flutter_real_estate/API_services/all_unity_services.dart';
+import 'package:flutter_real_estate/components/notification.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
+import 'package:flutter_real_estate/models/all_property_model.dart';
+import 'package:flutter_real_estate/models/all_tenants_model.dart';
+import 'package:flutter_real_estate/models/all_units_model.dart';
+import 'package:intl/intl.dart';
+import '../components/button_form_dialogbox.dart';
 
-class MaintenanceFragment extends StatelessWidget {
+class MaintenanceFragment extends StatefulWidget {
   MaintenanceFragment({super.key});
 
-  TextEditingController searchController = TextEditingController();
+  @override
+  State<MaintenanceFragment> createState() => _MaintenanceFragmentState();
+}
+
+class _MaintenanceFragmentState extends State<MaintenanceFragment> {
+  bool isLoading = true;
+  List<AllTenantsModel> tenants = [];
+  List<AllPropertyModel> properties = [];
+  List<AllUnityModel> unities = [];
+  AllUnityModel? unity;
+
+  final AllTenantsService allTenantsService = AllTenantsService();
+  final AllUnityServices allUnityServices = AllUnityServices();
+  final AllPropertyService allPropertyService = AllPropertyService();
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraint){
 
-      if(constraint.maxWidth < 500){
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-                horizontal: 30.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+    double constaintWidth = MediaQuery.of(context).size.width;
 
-                // Head
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 10.0,
+          horizontal: 30.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Head
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
 
-                          // Text
-                          const Text(
-                            "Maintenance",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
-                            ),
-                          ),
-
-
-                          // Color mark
-                          Container(
-                            width: 50,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: kbuttonNewColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-
-
-                        ],
+                      // Text
+                      const Text(
+                        "Maintenance",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        ),
                       ),
-
-
-                      MyNewPinkButton(
-                          width: 66,
-                          title: "+",
-                          onPressFunction: (){}
+                      // Color mark
+                      Container(
+                        width: 50,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: kbuttonNewColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
-
                     ],
                   ),
-                ),
 
+                  LayoutBuilder(builder: (context, constraints){
+                    if(constraints.maxWidth < 500){
+                      return const ButtonPinkButton(title: "+",);
+                    }else{
+                      return const ButtonPinkButton(title: "+ New Maintenance",);
+                    }
+                  }),
 
-
-                // Divider line
-                Container( // Make it take the full width
-                  height: 1,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-
-
-                const SizedBox(height: 20,),
-
-
-                // Search Box
-                Container(
-                  width: 500,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(30)
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(borderSide: BorderSide.none),
-                      hintText: "Search",
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Icon(Icons.search),
-                      ),
-                    ),
-                  ),
-                ),
-
-
-                const SizedBox(height: 20,),
-
-
-                //  tables
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Property-Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Ammount", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Status", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
-                        ],
-                        rows: [
-                          DataRow(cells: [
-                            const DataCell(Text('1')),
-                            const DataCell(Text('Samora Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$670')),
-                            const DataCell(Text('Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('2')),
-                            const DataCell(Text('BANK Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$670')),
-                            const DataCell(Text('Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('3')),
-                            const DataCell(Text('Uncaptured Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$370')),
-                            const DataCell(Text('Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(
-                                Row(
-                                  children: [
-                                    // view btn
-                                    IconButton(
-                                      onPressed: (){},
-                                      icon: const Icon(Icons.remove_red_eye),
-                                      color: CupertinoColors.systemBlue,
-                                    ),
-
-                                    // update btn
-                                    IconButton(
-                                      onPressed: (){},
-                                      icon: const Icon(Icons.mode_edit_outline),
-                                      color: CupertinoColors.systemGreen,
-                                    ),
-
-                                    // delete btn
-                                    IconButton(
-                                      onPressed: (){},
-                                      icon: const Icon(Icons.delete),
-                                      color: Colors.redAccent,
-                                    ),
-                                  ],
-                                )),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('4')),
-                            const DataCell(Text('Salamander Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$255')),
-                            const DataCell(Text('Not-Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ]),
-                        ]
-                    ),
-                  ),
-                ),
-
-
-
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      }else{
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-                horizontal: 30.0
+
+            // Divider line
+            Container(
+              height: 1,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade500,
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
 
-                // Head
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+            const SizedBox(height: 20),
 
-                          // Text
-                          const Text(
-                            "Maintenance",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
-                            ),
-                          ),
+            // Search Box
+            Container(
+              width: 500,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintText: "Search",
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Icon(Icons.search),
+                  ),
+                ),
+              ),
+            ),
 
+            const SizedBox(height: 20),
 
-                          // Color mark
-                          Container(
-                            width: 50,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: kbuttonNewColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-
-
-                        ],
-                      ),
-
-                      MyNewPinkButton(
-                          width: 200,
-                          title: "+ New Maintenance",
-                          onPressFunction: (){}
-                      ),
-
-                      // LayoutBuilder(builder: (context, constraints){
-                      //   if(constraints.maxWidth < 900){
-                      //     return MyNewPinkButton(
-                      //         width: 200,
-                      //         title: "+",
-                      //         onPressFunction: (){}
-                      //     );
-                      //   }else{
-                      //     return MyNewPinkButton(
-                      //         width: 200,
-                      //         title: "+ New Maintenancy",
-                      //         onPressFunction: (){}
-                      //     );
-                      //   }
-                      //
-                      // }),
-
+            //  tables
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Type", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Status", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
+                      DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
                     ],
-                  ),
+                    rows: [
+                      DataRow(cells: [
+                        const DataCell(Text('1')),
+                        const DataCell(Text('Samora Tower', overflow: TextOverflow.ellipsis,)),
+                        const DataCell(Text('Lease (Unity-105)')),
+                        const DataCell(Text('Paid')),
+                        const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
+                        DataCell(Row(
+                          children: [
+                            // view btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.remove_red_eye),
+                              color: CupertinoColors.systemBlue,
+                            ),
+
+                            // update btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.mode_edit_outline),
+                              color: CupertinoColors.systemGreen,
+                            ),
+
+                            // delete btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.delete),
+                              color: Colors.redAccent,
+                            ),
+                          ],
+                        )),
+                      ]),
+                      DataRow(cells: [
+                        const DataCell(Text('2')),
+                        const DataCell(Text('Uncaptured Tower', overflow: TextOverflow.ellipsis,)),
+                        const DataCell(Text('Maintenance (Water pipe)')),
+                        const DataCell(Text('Paid')),
+                        const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
+                        DataCell(Row(
+                          children: [
+                            // view btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.remove_red_eye),
+                              color: CupertinoColors.systemBlue,
+                            ),
+
+                            // update btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.mode_edit_outline),
+                              color: CupertinoColors.systemGreen,
+                            ),
+
+                            // delete btn
+                            IconButton(
+                              onPressed: (){},
+                              icon: const Icon(Icons.delete),
+                              color: Colors.redAccent,
+                            ),
+                          ],
+                        )),
+                      ]),
+                    ]
                 ),
-
-
-
-                // Divider line
-                Container( // Make it take the full width
-                  height: 1,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-
-
-                const SizedBox(height: 20,),
-
-
-                // Search Box
-                Container(
-                  width: 500,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(30)
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(borderSide: BorderSide.none),
-                      hintText: "Search",
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Icon(Icons.search),
-                      ),
-                    ),
-                  ),
-                ),
-
-
-                const SizedBox(height: 20,),
-
-
-                //  tables
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Property-Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Ammount", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Status", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
-                          DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
-                        ],
-                        rows: [
-                          DataRow(cells: [
-                            const DataCell(Text('1')),
-                            const DataCell(Text('Samora Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$670')),
-                            const DataCell(Text('Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('2')),
-                            const DataCell(Text('BANK Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$670')),
-                            const DataCell(Text('Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('3')),
-                            const DataCell(Text('Uncaptured Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$370')),
-                            const DataCell(Text('Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(
-                                Row(
-                                  children: [
-                                    // view btn
-                                    IconButton(
-                                      onPressed: (){},
-                                      icon: const Icon(Icons.remove_red_eye),
-                                      color: CupertinoColors.systemBlue,
-                                    ),
-
-                                    // update btn
-                                    IconButton(
-                                      onPressed: (){},
-                                      icon: const Icon(Icons.mode_edit_outline),
-                                      color: CupertinoColors.systemGreen,
-                                    ),
-
-                                    // delete btn
-                                    IconButton(
-                                      onPressed: (){},
-                                      icon: const Icon(Icons.delete),
-                                      color: Colors.redAccent,
-                                    ),
-                                  ],
-                                )),
-                          ]),
-                          DataRow(cells: [
-                            const DataCell(Text('4')),
-                            const DataCell(Text('Salamander Tower', overflow: TextOverflow.ellipsis,)),
-                            const DataCell(Text('\$255')),
-                            const DataCell(Text('Not-Solved')),
-                            const DataCell(Text('15:56 15-05-2024', overflow: TextOverflow.ellipsis,)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ]),
-                        ]
-                    ),
-                  ),
-                ),
-
-
-
-              ],
+              ),
             ),
-          ),
-        );
-      }
 
-    });;
+          ],
+        ),
+      ),
+    );
   }
 }
+
+
+
+class ButtonPinkButton extends StatelessWidget {
+  final String title;
+  const ButtonPinkButton({
+    super.key,
+    required this.title
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MyNewPinkButton(
+      width: 200,
+      title: title,
+      onPressFunction: () {},
+    );
+  }
+}
+
+

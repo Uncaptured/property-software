@@ -21,10 +21,10 @@ class DashboardLink extends StatelessWidget {
     return GestureDetector(
       onTap: changeIndex,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 9),
+        margin: const EdgeInsets.only(bottom: 6),
         padding: const EdgeInsets.symmetric(
           horizontal: 12,
-          vertical: 10,
+          vertical: 8,
         ),
         decoration: BoxDecoration(
           color: isActive ? khoverColor : Colors.transparent,
@@ -36,7 +36,8 @@ class DashboardLink extends StatelessWidget {
             // icon
             Icon(
               icon,
-              color: Colors.grey.shade300,),
+              color: Colors.grey.shade300,
+            ),
 
             const SizedBox(width: 10,),
 
@@ -46,16 +47,6 @@ class DashboardLink extends StatelessWidget {
               style:  TextStyle(
               color: Colors.grey.shade300,
             ),
-            ),
-
-            const SizedBox(width: 10),
-
-            // text
-            Text(
-              text,
-              style: TextStyle(
-                color: Colors.grey.shade200,
-              ),
             ),
 
           ],

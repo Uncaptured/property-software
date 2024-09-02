@@ -5,19 +5,12 @@ import 'package:flutter_real_estate/fragments/collections_fragment.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/lease_fragment.dart';
 import 'package:flutter_real_estate/fragments/maintenance_fragment.dart';
+import 'package:flutter_real_estate/fragments/profile_fragment.dart';
 import 'package:flutter_real_estate/fragments/property_fragment.dart';
 import 'package:flutter_real_estate/fragments/settings_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
-
-// class TabletScaffold extends StatelessWidget {
-//   const TabletScaffold({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       backgroundColor: Colors.blue,
-
+import 'package:flutter_real_estate/fragments/user_fragment.dart';
 
 
 class TabletScaffold extends StatefulWidget {
@@ -59,7 +52,9 @@ class _TabletScaffoldState extends State<TabletScaffold> {
       LeaseFragment(),
       CollectionFragment(),
       MaintenanceFragment(),
+      UserFragment(),
       SettingsFragment(),
+      ProfileFragment()
     ];
 
     return Scaffold(
@@ -144,6 +139,20 @@ class _TabletScaffoldState extends State<TabletScaffold> {
                       context: context
                   ),
 
+                  _buildDrawerItem(
+                      icon: Icons.person,
+                      text: 'Users',
+                      index: 7,
+                      context: context
+                  ),
+
+                  _buildDrawerItem(
+                      icon: Icons.account_tree,
+                      text: 'Roles',
+                      index: 8,
+                      context: context
+                  ),
+
                  SizedBox(
                    height: MediaQuery.of(context).size.height * 0.19,
                  ),
@@ -151,14 +160,14 @@ class _TabletScaffoldState extends State<TabletScaffold> {
                  _buildDrawerItem(
                      icon: Icons.settings,
                      text: 'Setting',
-                     index: 7,
+                     index: 9,
                      context: context
                  ),
 
                  _buildDrawerItem(
                      icon: Icons.account_circle,
                      text: 'Profile',
-                     index: 8,
+                     index: 10,
                      context: context
                  ),
 

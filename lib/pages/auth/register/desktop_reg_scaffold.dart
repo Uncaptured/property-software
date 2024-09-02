@@ -8,12 +8,51 @@ import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/components/reg_form_input.dart';
 import 'package:flutter_real_estate/components/reg_select_form_input.dart';
 import 'package:flutter_real_estate/pages/auth/login_page.dart';
+import '../../../API_services/roles_services.dart';
 
-class DesktopRegScaffold extends StatelessWidget {
+class DesktopRegScaffold extends StatefulWidget {
   DesktopRegScaffold({super.key});
 
+  @override
+  State<DesktopRegScaffold> createState() => _DesktopRegScaffoldState();
+}
+
+class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
   // Initialize the service
-  final authService = AuthApiService();
+  late AuthApiService authService;
+
+  // Declare a future for roles
+  late Future<List<String>> _rolesFuture;
+
+  bool isLoading = true;
+
+  // To manage loading state
+  @override
+  void initState() {
+    super.initState();
+    authService = AuthApiService();
+    _fetchRoles();  // Fetch roles when initializing the state
+  }
+
+  void _fetchRoles() async {
+    setState(() {
+      isLoading = true;  // Show loading indicator
+    });
+
+    _rolesFuture = allRoles(context);
+
+    // Await the roles and then hide the loading indicator
+    _rolesFuture.then((value) {
+      setState(() {
+        isLoading = false;  // Hide loading indicator once roles are fetched
+      });
+    }).catchError((error) {
+      setState(() {
+        isLoading = false;  // Hide loading indicator in case of error
+      });
+      showErrorMsg(context, "Failed to load roles");
+    });
+  }
 
   // Input controllers
   final TextEditingController _firstnameController = TextEditingController();
@@ -34,7 +73,7 @@ class DesktopRegScaffold extends StatelessWidget {
     );
 
     if (
-    _firstnameController.text.isEmpty ||
+        _firstnameController.text.isEmpty ||
         _lastnameController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _phoneController.text.isEmpty ||

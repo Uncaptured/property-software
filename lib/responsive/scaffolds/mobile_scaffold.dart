@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
-//
-// class MobileScaffold extends StatelessWidget {
-//   const MobileScaffold({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       backgroundColor: Colors.green,
-
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
 import 'package:flutter_real_estate/fragments/collections_fragment.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/lease_fragment.dart';
 import 'package:flutter_real_estate/fragments/maintenance_fragment.dart';
+import 'package:flutter_real_estate/fragments/profile_fragment.dart';
 import 'package:flutter_real_estate/fragments/property_fragment.dart';
+import 'package:flutter_real_estate/fragments/role_fragment.dart';
 import 'package:flutter_real_estate/fragments/settings_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
+import 'package:flutter_real_estate/fragments/user_fragment.dart';
 
 class MobileScaffold extends StatefulWidget {
   const MobileScaffold({super.key});
@@ -43,7 +37,10 @@ class _MobileScaffoldState extends State<MobileScaffold> {
       LeaseFragment(),
       CollectionFragment(),
       MaintenanceFragment(),
-      SettingsFragment()
+      UserFragment(),
+      RoleFragment(),
+      SettingsFragment(),
+      ProfileFragment()
     ];
   }
 
@@ -151,6 +148,22 @@ class _MobileScaffoldState extends State<MobileScaffold> {
                       Navigator.pop(context); // Close the drawer
                     },
                   ),
+                  ListTile(
+                    leading: Icon(Icons.person, color: Colors.grey.shade400,),
+                    title: Text('Users', style: TextStyle(color: Colors.grey.shade300)),
+                    onTap: () {
+                      _selectPage(7);
+                      Navigator.pop(context); // Close the drawer
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.account_tree, color: Colors.grey.shade400,),
+                    title: Text('Roles', style: TextStyle(color: Colors.grey.shade300)),
+                    onTap: () {
+                      _selectPage(8);
+                      Navigator.pop(context); // Close the drawer
+                    },
+                  ),
                 ],
               ),
             ),
@@ -159,7 +172,7 @@ class _MobileScaffoldState extends State<MobileScaffold> {
               leading: Icon(Icons.settings, color: Colors.grey.shade400,),
               title: Text('Settings', style: TextStyle(color: Colors.grey.shade300)),
               onTap: () {
-                _selectPage(7);
+                _selectPage(9);
                 Navigator.pop(context); // Close the drawer
               },
             ),
@@ -168,7 +181,7 @@ class _MobileScaffoldState extends State<MobileScaffold> {
               leading: Icon(Icons.account_circle, color: Colors.grey.shade400,),
               title: Text('Profile', style: TextStyle(color: Colors.grey.shade300)),
               onTap: () {
-                _selectPage(8);
+                _selectPage(10);
                 Navigator.pop(context); // Close the drawer
               },
             ),
