@@ -14,6 +14,19 @@ Future<List<String>> allRoles(BuildContext context) async {
     } else {
       throw Exception("Failed to load roles. Status code: ${response.statusCode}");
     }
+
+    // if (response.statusCode == 200) {
+    //   final List<dynamic> data = json.decode(response.body);
+    //
+    //   // Filter out "Admin" and map the remaining roles to a list of role names
+    //   return data
+    //       .where((role) => role['role_name'] != 'Admin') // Exclude "Admin"
+    //       .map<String>((role) => role['role_name'] as String)
+    //       .toList();
+    // } else {
+    //   throw Exception("Failed to load roles. Status code: ${response.statusCode}");
+    // }
+
   } catch (e) {
     throw Exception('Failed to load roles');
   }

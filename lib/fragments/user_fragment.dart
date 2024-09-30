@@ -21,16 +21,43 @@ class _UserFragmentState extends State<UserFragment> {
   List<AllUsersModel> users = [];
   List<Roles> roles = [];
   Roles? _selectedRole;
+  List<AllUsersModel> filteredUsers = [];
 
   final AllUsersService usersService = AllUsersService();
   final RolesService rolesService = RolesService();
 
   final TextEditingController searchController = TextEditingController();
 
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchUsers();
+  // }
+  //
+  // Future<void> _fetchUsers() async {
+  //   try {
+  //     List<AllUsersModel> allUsers = await usersService.getAllUsers();
+  //     List<Roles> fetchedRoles = await rolesService.getAllRoles();
+  //     setState(() {
+  //       users = allUsers;
+  //       roles = fetchedRoles;
+  //       isLoading = false;
+  //     });
+  //   } catch (e) {
+  //     showErrorMsg(context, "Error, $e");
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
+
+
   @override
   void initState() {
     super.initState();
     _fetchUsers();
+    searchController.addListener(_filterUsers);
   }
 
   Future<void> _fetchUsers() async {
@@ -39,6 +66,7 @@ class _UserFragmentState extends State<UserFragment> {
       List<Roles> fetchedRoles = await rolesService.getAllRoles();
       setState(() {
         users = allUsers;
+        filteredUsers = allUsers;  // Initialize filteredUsers with all users
         roles = fetchedRoles;
         isLoading = false;
       });
@@ -49,6 +77,24 @@ class _UserFragmentState extends State<UserFragment> {
       });
     }
   }
+
+
+  void _filterUsers() {
+    setState(() {
+      if (searchController.text.isEmpty) {
+        filteredUsers = users;  // Show all users if the search field is empty
+      } else {
+        final query = searchController.text.toLowerCase();
+        filteredUsers = users.where((user) {
+          return user.firstname.toLowerCase().contains(query) ||
+              user.lastname.toLowerCase().contains(query) ||
+              user.email.toLowerCase().contains(query) ||
+              roleName(user.roleId).toLowerCase().contains(query);
+        }).toList();
+      }
+    });
+  }
+
 
   void _showDialog() {
     showDialog(
@@ -389,10 +435,14 @@ class _UserFragmentState extends State<UserFragment> {
           horizontal: 30.0,
         ),
         child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
+            ?
+              const Center(child: CircularProgressIndicator())
+            :
+
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             // Head
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
@@ -436,7 +486,9 @@ class _UserFragmentState extends State<UserFragment> {
                 color: Colors.grey.shade500,
               ),
             ),
+
             const SizedBox(height: 20),
+
             // Search Box
             Container(
               width: 500,
@@ -457,97 +509,88 @@ class _UserFragmentState extends State<UserFragment> {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
-            // Tables
+
+
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
               child: Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: DataTable(
                   columns: const [
-                    DataColumn(
-                        label: Text(
-                          "#",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "FirstName",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "LastName",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "Email",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "Phone",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "Role",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "CreatedAt",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    DataColumn(
-                        label: Text(
-                          "Actions",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
+                    DataColumn(label: Text('#', style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text('First Name', style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text('Last Name', style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text('Email Address', style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text('Phone Number', style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text('Role', style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold))),
                   ],
-                  rows: [
-                    for (var user in users)
-                      DataRow(cells: [
-                        DataCell(Text("${id++}")),
-                        DataCell(Text(user.firstname)),
-                        DataCell(Text(user.lastname)),
-                        DataCell(Text(user.email)),
-                        DataCell(Text(user.phone)),
-                        DataCell(Text(roleName(user.roleId))),
-                        DataCell(Text(user.timeAgo)),
-                        DataCell(Row(
-                          children: [
-                            // view btn
-                            IconButton(
-                              onPressed: () => viewUserData(user.id),
-                              icon: const Icon(Icons.remove_red_eye),
-                              color: CupertinoColors.systemBlue,
+                  rows: filteredUsers.isEmpty
+                      ? [
+                    const DataRow(
+                      cells: [
+                        DataCell.empty,
+                        DataCell.empty,
+                        DataCell.empty,
+                        DataCell(
+                          Center(
+                            child: Text(
+                              'Empty Users Data',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            // update btn
-                            IconButton(
-                              onPressed: () => showUpdateUser(user.id),
-                              icon: const Icon(Icons.mode_edit_outline),
-                              color: CupertinoColors.systemGreen,
-                            ),
-                            // delete btn
-                            IconButton(
-                              onPressed: () => _deleteuser(user.id),
-                              icon: const Icon(Icons.delete),
-                              color: Colors.redAccent,
-                            ),
-                          ],
-                        )),
-                      ])
-                  ],
+                          ),
+                        ),
+                        DataCell.empty,
+                        DataCell.empty,
+                        DataCell.empty,
+                      ],
+                    ),
+                  ]
+                      : List<DataRow>.generate(
+                    filteredUsers.length,
+                        (index) {
+                      final user = filteredUsers[index];
+                      return DataRow(
+                        cells: [
+                          DataCell(Text('${index + 1}')),  // Index starts from 1
+                          DataCell(Text(user.firstname)),
+                          DataCell(Text(user.lastname)),
+                          DataCell(Text(user.email)),
+                          DataCell(Text(user.phone)),
+                          DataCell(Text(roleName(user.roleId))),
+                          DataCell(Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.visibility, color: Colors.blue),
+                                onPressed: () => viewUserData(user.id),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: CupertinoColors.activeGreen),
+                                onPressed: () => showUpdateUser(user.id),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: CupertinoColors.destructiveRed),
+                                onPressed: () => _deleteuser(user.id),
+                              ),
+                            ],
+                          )),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
+
           ],
         ),
       ),
@@ -632,7 +675,7 @@ class _MyCreateNewDialogState extends State<MyCreateNewDialog> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.88,
+            height: MediaQuery.of(context).size.height * 0.78,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(

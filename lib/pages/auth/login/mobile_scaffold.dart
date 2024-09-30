@@ -12,6 +12,12 @@ import 'package:flutter_real_estate/API_services/roles_services.dart';
 import 'package:flutter_real_estate/pages/home_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../users_roles/dashboard_collections.dart';
+import '../../users_roles/dashboard_maintenance.dart';
+import '../../users_roles/dashboard_properties.dart';
+import '../../users_roles/dashboard_tenant.dart';
+import '../forgotPassword.dart';
+
 class MobileLoginScaffold extends StatefulWidget {
   MobileLoginScaffold({super.key});
 
@@ -33,6 +39,7 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool isLoading = true;  // To manage loading state
+  bool isSecured = true;
 
   @override
   void initState() {
@@ -61,29 +68,80 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
     });
   }
 
-  // function LOGIN USER
+
+  void _isLoadingState(){
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.white)),
+    );
+  }
+
+
   void _loginUser(BuildContext context) async {
+    _isLoadingState();
     if (_emailController.text.isEmpty ||
         _roleController.text.isEmpty ||
         _passwordController.text.isEmpty) {
+      Navigator.pop(context);
       showErrorMsg(context, "All Fields are Required");
+      return;
     } else {
       final response = await authService.loginUser({
         'email': _emailController.text,
         'role_id': _roleController.text,
         'password': _passwordController.text,
       });
-
+      Navigator.pop(context);
       if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
         showSuccessMsg(context, "Login Successfully");
+        if(_roleController.text == 'Maintenance'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DashboardMaintenancePage()),
+          );
+        }else if(_roleController.text == 'Collections'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DashboardCollectionsPage()),
+          );
+        }else if(_roleController.text == 'Admin'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }else if(_roleController.text == 'Tenants'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DashboardTenantPage()),
+          );
+        }
+        else if(_roleController.text == 'Property'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const DashboardPropertyPage()),
+          );
+        }else{
+          showErrorMsg(context, 'Role Not-Defined, Define in Login Methods');
+        }
+      } else if (response.statusCode == 400) {
+        Navigator.pop(context);
+        showErrorMsg(context, "Validation Error");
+      } else if (response.statusCode == 401) {
+        Navigator.pop(context);
+        showErrorMsg(context, "Auth Error, Invalid Credentials");
       } else {
+        Navigator.pop(context);
         showErrorMsg(context, "Email, Role, or Password is Incorrect");
       }
     }
+  }
+
+
+  void _changeHideAndViewPassword(){
+    setState(() {
+      isSecured = !isSecured;
+    });
   }
 
   @override
@@ -163,7 +221,7 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
                             return const Text('No roles available');
                           } else {
                             return MyFormSelectInput(
-                              icon: Icons.format_list_numbered_sharp,
+                              icon: Icons.account_tree,
                               title: "Role",
                               controller: _roleController,
                               isPassword: false,
@@ -179,8 +237,10 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
                       MyFormInput(
                         icon: Icons.lock,
                         controller: _passwordController,
-                        isPassword: true,
+                        isPassword: isSecured,
                         title: "Password",
+                        onTapHide: _changeHideAndViewPassword,
+                        suffixIcon: isSecured ? Icons.visibility : Icons.visibility_off,
                       ),
 
                       const SizedBox(height: 20,),
@@ -190,7 +250,10 @@ class _MobileLoginScaffoldState extends State<MobileLoginScaffold> {
                         children: [
                           // forgot password
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const ForgotPasswordPage())
+                            ),
                             child: const Text(
                               "forgotPassword?",
                               style: TextStyle(

@@ -40,36 +40,33 @@ class AllTenantsService{
   }
 
 
+  Future<http.Response> deleteTenant(int id) async {
+    final token = await storage.read(key: 'auth_token');
 
-  // Future<http.Response> deleteUser(int id) async {
-  //   final token = await storage.read(key: 'auth_token');
-  //
-  //   final response = await http.get(
-  //       Uri.parse('$baseUrl/delete-user/$id'),
-  //       headers: {
-  //         'Authorization': 'Bearer $token',
-  //         'Content-Type': 'application/json',
-  //       }
-  //   );
-  //
-  //   return response;
-  // }
-  //
-  //
-  // Future<http.Response> updateUserData(Map<String, dynamic> usersData) async {
-  //   final token = await storage.read(key: 'auth_token');
-  //
-  //   final response = await http.post(
-  //       Uri.parse('$baseUrl/update-user'),
-  //       body: jsonEncode(usersData),
-  //       headers: {
-  //         'Authorization': 'Bearer $token',
-  //         'Content-Type': 'application/json',
-  //       }
-  //   );
-  //   return response;
-  // }
+    final response = await http.get(
+        Uri.parse('$baseUrl/delete-tenant/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        }
+    );
+    return response;
+  }
 
 
+
+  Future<http.Response> updateTenant(Map<String, dynamic> tenantData) async {
+    final token = await storage.read(key: 'auth_token');
+
+    final response = await http.post(
+        Uri.parse('$baseUrl/update-tenant'),
+        body: jsonEncode(tenantData),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        }
+    );
+    return response;
+  }
 
 }

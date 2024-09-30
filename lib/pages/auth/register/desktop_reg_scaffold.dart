@@ -18,37 +18,33 @@ class DesktopRegScaffold extends StatefulWidget {
 }
 
 class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
-  // Initialize the service
+
   late AuthApiService authService;
-
-  // Declare a future for roles
   late Future<List<String>> _rolesFuture;
-
   bool isLoading = true;
+  bool isSecured = true;
 
-  // To manage loading state
   @override
   void initState() {
     super.initState();
     authService = AuthApiService();
-    _fetchRoles();  // Fetch roles when initializing the state
+    _fetchRoles();
   }
 
   void _fetchRoles() async {
     setState(() {
-      isLoading = true;  // Show loading indicator
+      isLoading = true;
     });
 
     _rolesFuture = allRoles(context);
 
-    // Await the roles and then hide the loading indicator
     _rolesFuture.then((value) {
       setState(() {
-        isLoading = false;  // Hide loading indicator once roles are fetched
+        isLoading = false;
       });
     }).catchError((error) {
       setState(() {
-        isLoading = false;  // Hide loading indicator in case of error
+        isLoading = false;
       });
       showErrorMsg(context, "Failed to load roles");
     });
@@ -68,7 +64,7 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator(color: Colors.white,));
       },
     );
 
@@ -106,10 +102,19 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
     }
   }
 
+  void _changeHideAndViewPassword(){
+    setState(() {
+      isSecured = !isSecured;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+      body: isLoading ?
+        const Center(child: CircularProgressIndicator(),)
+      :
+      Padding(
         padding: const EdgeInsets.symmetric(horizontal: 195),
         child: Center(
           child: Container(
@@ -160,6 +165,7 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
                               color: Colors.black, // Ensure the text color is visible
                             ),
                           ),
+
                           const SizedBox(height: 25),
 
                           Row(
@@ -182,6 +188,7 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
                                   title: "LastName",
                                 ),
                               ),
+
                             ],
                           ),
 
@@ -192,11 +199,14 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
                             isPassword: false,
                             title: "Email Address",
                           ),
+
                           const SizedBox(height: 20),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+
                               Expanded(
                                 child: MyRegFormInput(
                                   controller: _phoneController,
@@ -204,7 +214,9 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
                                   title: "Phone",
                                 ),
                               ),
+
                               const SizedBox(width: 15),
+
                               Expanded(
                                 child: MyRegSelectFormInput(
                                   controller: _roleController,
@@ -212,20 +224,28 @@ class _DesktopRegScaffoldState extends State<DesktopRegScaffold> {
                                   title: "Role",
                                 ),
                               ),
+
                             ],
                           ),
+
                           const SizedBox(height: 20),
+
                           MyRegFormInput(
                             controller: _passwordController,
-                            isPassword: true,
+                            isPassword: isSecured,
                             title: "Password",
+                            suffixIcon: isSecured ? Icons.visibility : Icons.visibility_off,
+                            onTapHide: _changeHideAndViewPassword,
                           ),
+
                           const SizedBox(height: 28),
+
                           MyNewPinkButton(
                             width: 300,
                             title: "Sign Up",
                             onPressFunction: () => _registerUser(context),
                           ),
+
                           const SizedBox(height: 25),
 
                           // Login link

@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_real_estate/components/dashboard_link.dart';
 import 'package:flutter_real_estate/constants.dart';
+import 'package:flutter_real_estate/fragments/admin_fragment.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/profile_fragment.dart';
 import 'package:flutter_real_estate/fragments/property_fragment.dart';
 import 'package:flutter_real_estate/fragments/role_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
-import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/lease_fragment.dart';
 import 'package:flutter_real_estate/fragments/maintenance_fragment.dart';
-import 'package:flutter_real_estate/fragments/property_fragment.dart';
 import 'package:flutter_real_estate/fragments/settings_fragment.dart';
-import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
 import '../../fragments/collections_fragment.dart';
 import '../../fragments/user_fragment.dart';
@@ -37,12 +35,13 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
     _screens = [
       DashboardFragment(onSelectPage: _selectPage),
       PropertyFragment(),
-      UnityFragment(),
+      const UnityFragment(),
       TenantFragment(),
       LeaseFragment(),
       CollectionFragment(),
       MaintenanceFragment(),
       UserFragment(),
+      AdminFragment(),
       RoleFragment(),
       SettingsFragment(),
       ProfileFragment()
@@ -151,6 +150,7 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                     _selectPage(6);
                   },
                 ),
+
                 DashboardLink(
                   icon: Icons.person,
                   text: "Users",
@@ -159,12 +159,22 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                     _selectPage(7);
                   },
                 ),
+
                 DashboardLink(
-                  icon: Icons.account_tree,
-                  text: "Roles",
+                  icon: Icons.person_add_alt_rounded,
+                  text: "Admins",
                   isActive: pageIndex == 8, // Active when pageIndex is 6
                   changeIndex: () {
                     _selectPage(8);
+                  },
+                ),
+
+                DashboardLink(
+                  icon: Icons.account_tree,
+                  text: "Roles",
+                  isActive: pageIndex == 9, // Active when pageIndex is 6
+                  changeIndex: () {
+                    _selectPage(9);
                   },
                 ),
 
@@ -174,17 +184,17 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                 DashboardLink(
                   icon: Icons.settings,
                   text: "Settings",
-                  isActive: pageIndex == 9, // Active when pageIndex is 7
+                  isActive: pageIndex == 10, // Active when pageIndex is 7
                   changeIndex: () {
-                    _selectPage(9);
+                    _selectPage(10);
                   },
                 ),
                 DashboardLink(
                   icon: Icons.account_circle,
                   text: "Profile",
-                  isActive: pageIndex == 10, // Active when pageIndex is 8
+                  isActive: pageIndex == 11, // Active when pageIndex is 8
                   changeIndex: () {
-                    _selectPage(10);
+                    _selectPage(11);
                   },
                 ),
 

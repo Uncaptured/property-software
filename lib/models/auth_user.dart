@@ -12,7 +12,7 @@ class AuthUser {
   String lastname = '';
   String email = '';
   String phone = '';
-  String roleId = '';
+  int roleId = 0;
   String createdAt = '';
 
   // Method to update the singleton instance from JSON
@@ -23,7 +23,7 @@ class AuthUser {
       _instance.lastname = json['lastname'] ?? '';
       _instance.email = json['email'] ?? '';
       _instance.phone = json['phone'] ?? '';
-      _instance.roleId = json['role_id'] ?? '';
+      _instance.roleId = json['role_id'] ?? 0;
       _instance.createdAt = json['created_at'] ?? '';
     } catch (e) {
       print('Error updating user from JSON: $e');

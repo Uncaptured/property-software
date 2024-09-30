@@ -71,5 +71,13 @@ class AllUsersService{
   }
 
 
+  Future<http.Response> resetUserPassword(Map<String, dynamic> usersData) async {
+    final response = await http.post(
+        Uri.parse('$baseUrl/reset-user-password'),
+        body: jsonEncode(usersData),
+        headers: {'Content-Type': 'application/json'},
+    );
+    return response;
+  }
 
 }

@@ -7,6 +7,7 @@ class AllUnityModel{
   final String baths;
   final String sqm;
   final String price;
+  final String status;
   final int property_id;
   final String created_at;
 
@@ -17,6 +18,7 @@ class AllUnityModel{
     required this.baths,
     required this.sqm,
     required this.price,
+    required this.status,
     required this.property_id,
     required this.created_at
   });
@@ -29,6 +31,7 @@ class AllUnityModel{
         baths: json['unity_baths'],
         sqm: json['sqm'],
         price: json['unity_price'],
+        status: json['status'],
         property_id: json['property_id'],
         created_at: json['created_at']
     );

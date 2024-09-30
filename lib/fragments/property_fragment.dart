@@ -22,6 +22,7 @@ class _PropertyFragmentState extends State<PropertyFragment> {
   bool isLoading = true;
   List<AllPropertyModel> properties = [];
   List<AllUnityModel> unities = [];
+  List<AllPropertyModel> filteredProperty = [];
   String? selectedPropertyType;
 
   final AllPropertyService allPropertyService = AllPropertyService();
@@ -37,6 +38,23 @@ class _PropertyFragmentState extends State<PropertyFragment> {
   void initState() {
     super.initState();
     _fetchProperties();
+    searchController.addListener(_filterProperty);
+  }
+
+
+  void _filterProperty() {
+    setState(() {
+      if (searchController.text.isEmpty) {
+        filteredProperty = properties;
+      } else {
+        final query = searchController.text.toLowerCase();
+        filteredProperty = properties.where((prop) {
+          return prop.name.toLowerCase().contains(query.toLowerCase()) ||
+              prop.type.toLowerCase().contains(query.toLowerCase()) ||
+              prop.address.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
   }
 
 
@@ -46,6 +64,7 @@ class _PropertyFragmentState extends State<PropertyFragment> {
       List<AllUnityModel> allUnities = await allUnityServices.getAllUnities();
       setState(() {
         properties = allProperty;
+        filteredProperty = allProperty;
         unities = allUnities;
         isLoading = false;
       });
@@ -92,7 +111,7 @@ class _PropertyFragmentState extends State<PropertyFragment> {
                         const SizedBox(height: 15),
                         showContentDialog(columnName: "Property Type", content: myProp.type),
                         const SizedBox(height: 15),
-                        const showContentDialog(columnName: "Total Unity", content: "20"),
+                        showContentDialog(columnName: "Total Unity", content: countPropertyUnits(myProp.id).toString()),
                         const SizedBox(height: 15),
                         showContentDialog(columnName: "Created Time", content: "${myProp.formattedDate} (${myProp.timeAgo})"),
                         const SizedBox(height: 20),
@@ -214,17 +233,29 @@ class _PropertyFragmentState extends State<PropertyFragment> {
   }
 
 
+  void isLoadingState(){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(color: Colors.white,),
+        )
+    );
+  }
+
+
   Future<void> _updateProperty(
       int id, String name, String address, String type
       ) async {
-    isLoading = true;
+
+    isLoadingState();
+
     if(
-    id.isNaN ||
+        id.isNaN ||
         name.isEmpty ||
         address.isEmpty ||
         type.isEmpty
     ){
-      isLoading = false;
       Navigator.pop(context);
       showErrorMsg(context, "All Fields are Required");
     }
@@ -237,12 +268,12 @@ class _PropertyFragmentState extends State<PropertyFragment> {
       });
 
       if(response.statusCode == 200){
-        isLoading = false;
+        Navigator.pop(context);
         Navigator.pop(context);
         _fetchProperties();
         showSuccessMsg(context, 'Property Updated Successfully');
       }else{
-        isLoading = false;
+        Navigator.pop(context);
         Navigator.pop(context);
         showErrorMsg(context, "Property Updated Unsuccessfully");
       }
@@ -252,25 +283,21 @@ class _PropertyFragmentState extends State<PropertyFragment> {
 
 
   Future<void> _deleteProperty(int propertyId) async {
-    setState((){
-      isLoading = true;
-    });
-
+   isLoadingState();
     final response = await allPropertyService.deleteProperty(propertyId);
 
     if(response.statusCode == 200){
       setState(() {
         properties.removeWhere((property) => property.id == propertyId);
         _fetchProperties();
-        isLoading = false;
+        Navigator.pop(context);
       });
       showSuccessMsg(context, "Property Deleted Successfully");
     }else{
-      isLoading = false;
+      Navigator.pop(context);
       showErrorMsg(context, "Property Delete Unsuccessfully");
     }
   }
-
 
 
   void _showDialog() {
@@ -336,6 +363,7 @@ class _PropertyFragmentState extends State<PropertyFragment> {
                 ],
               ),
             ),
+
             // Divider line
             Container(
               height: 1,
@@ -344,133 +372,170 @@ class _PropertyFragmentState extends State<PropertyFragment> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 150,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
-            // Search Box
-            Container(
-              width: 500,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: "Search",
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Icon(Icons.search),
+                      const SizedBox(height: 20),
+
+                      // Search Box
+                      Container(
+                        width: 500,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "Search",
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(Icons.search),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Table
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(
+                                label: Text(
+                                  "#",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Property Name",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Property Type",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Property Address",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Total Unity",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Created_at",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Actions",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                            rows: filteredProperty.isEmpty
+                                ? [
+                              const DataRow(
+                                cells: [
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell(
+                                    Center(
+                                      child: Text(
+                                        'Empty Property Data',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                ],
+                              ),
+                            ]
+                                : List<DataRow>.generate(
+                              filteredProperty.length,
+                                  (index) {
+                                final prop = filteredProperty[index];
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text('${index + 1}')),
+                                    DataCell(Text(prop.name)),
+                                    DataCell(Text(prop.type)),
+                                    DataCell(Text(prop.address)),
+                                    DataCell(Text('${countPropertyUnits(prop.id)}')),
+                                    DataCell(Text(prop.timeAgo)),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () => _viewProperty(prop.id),
+                                            icon: const Icon(Icons.remove_red_eye),
+                                            color: CupertinoColors.systemBlue,
+                                          ),
+                                          IconButton(
+                                            onPressed: () => showUpdateProperty(prop.id),
+                                            icon: const Icon(Icons.mode_edit_outline),
+                                            color: CupertinoColors.systemGreen,
+                                          ),
+                                          IconButton(
+                                            onPressed: () => _deleteProperty(prop.id),
+                                            icon: const Icon(Icons.delete),
+                                            color: Colors.redAccent,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+
+                          ),
+                        ),
+                      ),
+
+                    ],
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
-
-            // Table
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DataTable(
-                  columns: const [
-                    DataColumn(
-                      label: Text(
-                        "#",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        "Property Name",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        "Property Type",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        "Property Address",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        "Total Unity",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        "Created_at",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        "Actions",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                  rows: [
-                    if(properties.isNotEmpty)
-                      for(var prop in properties)
-                        DataRow(cells: [
-                          DataCell(Text("${id++}")),
-                          DataCell(Text(prop.name)),
-                          DataCell(Text(prop.type)),
-                          DataCell(Text(prop.address)),
-                          DataCell(Text('${countPropertyUnits(prop.id)}')),
-                          DataCell(Text(prop.timeAgo)),
-                          DataCell(
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () => _viewProperty(prop.id),
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-                                IconButton(
-                                  onPressed: () => showUpdateProperty(prop.id),
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-                                IconButton(
-                                  onPressed: () => _deleteProperty(prop.id),
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ])
-                    else
-                      const DataRow(cells: [
-                        DataCell(Text('')),
-                        DataCell(Text('')),
-                        DataCell(Text('')),
-                        DataCell(Center(child: Text('Empty Properties', style: TextStyle(color: Colors.red),))),
-                        DataCell(Text('')),
-                        DataCell(Text('')),
-                        DataCell(Text('')),
-                      ]
-                    )
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

@@ -5,6 +5,8 @@ class MyFormInput extends StatefulWidget {
   final IconData icon;
   final bool isPassword;
   final String title;
+  final IconData? suffixIcon;
+  final Function()? onTapHide;
 
   // constructor
   const MyFormInput({
@@ -13,6 +15,8 @@ class MyFormInput extends StatefulWidget {
     required this.controller,
     required this.isPassword,
     required this.title,
+    this.onTapHide,
+    this.suffixIcon
   });
 
   @override
@@ -22,7 +26,8 @@ class MyFormInput extends StatefulWidget {
 class _MyFormInputState extends State<MyFormInput> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return
+      Container(
       width: MediaQuery.of(context).size.width * 0.9,
       padding: const EdgeInsets.symmetric(
         horizontal: 20,
@@ -36,6 +41,15 @@ class _MyFormInputState extends State<MyFormInput> {
         obscureText: widget.isPassword,
         decoration: InputDecoration(
           hintText: widget.title,
+          suffixIcon: widget.suffixIcon != null ?
+          GestureDetector(
+            onTap: widget.onTapHide,
+            child: Icon(
+              widget.suffixIcon!,
+              color: Colors.grey,
+            ),
+          )
+          : null,
           icon: Icon(
             widget.icon,
             color: Colors.grey,

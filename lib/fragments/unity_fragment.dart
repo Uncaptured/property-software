@@ -7,7 +7,6 @@ import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
 import 'package:flutter_real_estate/models/all_property_model.dart';
 import 'package:flutter_real_estate/models/all_units_model.dart';
-import 'package:get/get.dart';
 import '../components/button_form_dialogbox.dart';
 import '../components/notification.dart';
 
@@ -22,6 +21,7 @@ class UnityFragment extends StatefulWidget {
 class _UnityFragmentState extends State<UnityFragment> {
   bool isLoading = true;
   List<AllUnityModel> unities = [];
+  List<AllUnityModel> filteredUnits = [];
   List<AllPropertyModel> properties = [];
 
   final TextEditingController searchController = TextEditingController();
@@ -32,24 +32,45 @@ class _UnityFragmentState extends State<UnityFragment> {
   void initState() {
     super.initState();
     _fetchUnities();
+    searchController.addListener(_filterUnits);
+  }
+
+  void isLoadingState(){
+    showDialog(context: context, builder: (context){
+      return const Center(
+        child: CircularProgressIndicator(color: Colors.white,),
+      );
+    });
+  }
+
+
+  void _filterUnits() {
+    setState(() {
+      if (searchController.text.isEmpty) {
+        filteredUnits = unities;  // Show all users if the search field is empty
+      } else {
+        final query = searchController.text.toLowerCase();
+        filteredUnits = unities.where((unit) {
+          return unit.name.toLowerCase().contains(query.toLowerCase()) ||
+              unit.status.toLowerCase().contains(query.toLowerCase()) ||
+              unit.price.toLowerCase().contains(query.toLowerCase()) ||
+              unit.beds.toLowerCase().contains(query.toLowerCase()) ||
+              unit.sqm.toLowerCase().contains(query.toLowerCase()) ||
+              unit.baths.toLowerCase().contains(query.toLowerCase()) ||
+              propertyName(unit.id).toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
   }
 
 
   Future<void> _fetchUnities() async {
-    // Show loading indicator
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (BuildContext context) {
-    //     return const Center(child: CircularProgressIndicator());
-    //   },
-    // );
-
     try {
       List<AllUnityModel> allUnities = await allUnityServices.getAllUnities();
       List<AllPropertyModel> allProperties = await allPropertyService.getAllProperties();
       setState(() {
         unities = allUnities;
+        filteredUnits = allUnities;
         properties = allProperties;
         isLoading = false;
       });
@@ -64,27 +85,19 @@ class _UnityFragmentState extends State<UnityFragment> {
 
 
   Future<void> _deleteUnity(int unityId) async {
-    // Show loading indicator
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (BuildContext context) {
-    //     return const Center(child: CircularProgressIndicator());
-    //   },
-    // );
-
+    isLoadingState();
     final response = await allUnityServices.deleteUnity(unityId);
 
     if(response.statusCode == 200){
       setState(() {
         unities.removeWhere((unity) => unity.id == unityId);
         _fetchUnities();
-        isLoading = false;
+        Navigator.pop(context);
       });
-      showSuccessMsg(context, "Unity Deleted Successfully");
+      showSuccessMsg(context, "Unit Deleted Successfully");
     }else{
-      isLoading = false;
-      showErrorMsg(context, "Unity Delete Unsuccessfully");
+      Navigator.pop(context);
+      showErrorMsg(context, "Unit Delete Unsuccessfully");
     }
   }
 
@@ -98,14 +111,56 @@ class _UnityFragmentState extends State<UnityFragment> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Expanded(
+                title: Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("View Unity", style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Divider(),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("View Unit", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                          Badge(
+                            backgroundColor:  myUnity.status == 'taken' ? CupertinoColors.activeGreen : (myUnity.status == 'pending' ? CupertinoColors.systemYellow : CupertinoColors.destructiveRed),
+                            largeSize: 33,
+                            label: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25
+                              ),
+                              child: Row(
+                                children: [
+
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: Colors.white,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 8,),
+
+                                  Text(
+                                      myUnity.status == 'taken' ? 'Taken' : (myUnity.status == 'pending' ? 'Pending' : 'Not-Taken'),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14.5
+                                        // color: myUnity.status == 'taken' ? CupertinoColors.activeGreen : (myUnity.status == 'pending' ? CupertinoColors.systemYellow : CupertinoColors.destructiveRed),
+                                      )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      const Divider(),
                     ],
                   ),
                 ),
@@ -123,9 +178,9 @@ class _UnityFragmentState extends State<UnityFragment> {
                           spacing: 15,
                           runSpacing: 15,
                           children: [
-                            showContentDialog(columnName: "Unity Name", content: myUnity.name),
+                            showContentDialog(columnName: "Unit Name", content: myUnity.name),
                             // const SizedBox(height: 15),
-                            showContentDialog(columnName: "Unity PropertyName", content: propertyName(myUnity.property_id)),
+                            showContentDialog(columnName: "Unit PropertyName", content: propertyName(myUnity.property_id)),
                           ],
                         ),
 
@@ -135,9 +190,9 @@ class _UnityFragmentState extends State<UnityFragment> {
                           runSpacing: 15,
                           spacing: 15,
                           children: [
-                            showContentDialog(columnName: "Unity beds", content: myUnity.beds),
+                            showContentDialog(columnName: "Unit beds", content: myUnity.beds),
                             // const SizedBox(height: 15),
-                            showContentDialog(columnName: "Unity baths", content: myUnity.baths),
+                            showContentDialog(columnName: "Unit baths", content: myUnity.baths),
                           ],
                         ),
 
@@ -147,9 +202,9 @@ class _UnityFragmentState extends State<UnityFragment> {
                           runSpacing: 15,
                           spacing: 15,
                           children: [
-                            showContentDialog(columnName: "Unity SQM", content: myUnity.sqm),
+                            showContentDialog(columnName: "Unit SQM", content: myUnity.sqm),
                             // const SizedBox(height: 15),
-                            showContentDialog(columnName: "Unity Price", content: 'Tzs ${myUnity.price}'),
+                            showContentDialog(columnName: "Unit Price", content: 'Tzs ${myUnity.price}'),
                           ],
                         ),
 
@@ -173,7 +228,6 @@ class _UnityFragmentState extends State<UnityFragment> {
 
 
 
-
   Future<void> showUpdateUnity(int unityId) async {
     for(var myUnity in unities){
       if(myUnity.id == unityId){
@@ -186,6 +240,7 @@ class _UnityFragmentState extends State<UnityFragment> {
               final _updateBathsController = TextEditingController(text: myUnity.baths);
               final _updatePriceController = TextEditingController(text: myUnity.price);
               final _updateSqmController = TextEditingController(text: myUnity.sqm);
+              final _statusUpdateController = TextEditingController(text: myUnity.status);
 
               return AlertDialog(
                   backgroundColor: Colors.white,
@@ -195,7 +250,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Update Unity", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text("Update Unit", style: TextStyle(fontWeight: FontWeight.bold)),
                         SizedBox(height: 10),
                         Divider(),
                       ],
@@ -204,7 +259,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                   content: Expanded(
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.45, // Adjust width here
-                      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.53,),
+                      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7,),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -218,7 +273,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                             child: TextField(
                               controller: _updateNameController,
                               decoration: const InputDecoration(
-                                labelText: 'Unity Name',
+                                labelText: 'Unit Name',
                                 border: InputBorder.none,
                               ),
                             ),
@@ -235,7 +290,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                             child: TextField(
                               controller: _updateBedsController,
                               decoration: const InputDecoration(
-                                labelText: 'Unity Beds',
+                                labelText: 'Unit Beds',
                                 border: InputBorder.none,
                               ),
                             ),
@@ -252,7 +307,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                             child: TextField(
                               controller: _updateBathsController,
                               decoration: const InputDecoration(
-                                labelText: 'Unity Baths',
+                                labelText: 'Unit Baths',
                                 border: InputBorder.none,
                               ),
                             ),
@@ -269,7 +324,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                             child: TextField(
                               controller: _updateSqmController,
                               decoration: const InputDecoration(
-                                labelText: 'Unity SQM',
+                                labelText: 'Unit SQM',
                                 border: InputBorder.none,
                               ),
                             ),
@@ -286,8 +341,37 @@ class _UnityFragmentState extends State<UnityFragment> {
                             child: TextField(
                               controller: _updatePriceController,
                               decoration: const InputDecoration(
-                                labelText: 'Unity Price (Tzs)',
+                                labelText: 'Unit Price (Tzs)',
                                 border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 18),
+
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: DropdownButtonFormField<String>(
+                              value: _statusUpdateController.text,  // Set initial value from the controller
+                              items: ["taken", "not-taken", "pending"]
+                                  .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _statusUpdateController.text = newValue ?? "";  // Update the controller's text with the new value
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'Unit Status',  // Optionally add a label
                               ),
                             ),
                           ),
@@ -309,6 +393,7 @@ class _UnityFragmentState extends State<UnityFragment> {
                         _updateBathsController.text,
                         _updateSqmController.text,
                         _updatePriceController.text,
+                        _statusUpdateController.text
                       ),
                     ),
                   ]
@@ -319,21 +404,15 @@ class _UnityFragmentState extends State<UnityFragment> {
     }
   }
 
-
-
-  Future<void> _updateUnity(int id, String name, String beds, String baths, String sqm, String price) async {
-    setState(() {
-      const Center(
-        child: CircularProgressIndicator(),
-      );
-    });
-
+  Future<void> _updateUnity(int id, String name, String beds, String baths, String sqm, String price, String status) async {
+    isLoadingState();
     if(
         name.isEmpty ||
         beds.isEmpty ||
         baths.isEmpty ||
         sqm.isEmpty ||
-        price.isEmpty
+        price.isEmpty ||
+        status.isEmpty
     ){
       Navigator.pop(context);
       showErrorMsg(context, "All Fields are Required");
@@ -345,16 +424,19 @@ class _UnityFragmentState extends State<UnityFragment> {
         'unity_beds': beds,
         'unity_baths': baths,
         'sqm': sqm,
-        'unity_price': price
+        'unity_price': price,
+        'status': status
       });
 
       if(response.statusCode == 200){
         Navigator.pop(context);
+        Navigator.pop(context);
         _fetchUnities();
-        showSuccessMsg(context, 'Unity Updated Successfully');
+        showSuccessMsg(context, 'Unit Updated Successfully');
       }else{
         Navigator.pop(context);
-        showErrorMsg(context, "Unity Updated Unsuccessfully");
+        Navigator.pop(context);
+        showErrorMsg(context, "Unit Updated Unsuccessfully");
       }
     }
   }
@@ -409,7 +491,7 @@ class _UnityFragmentState extends State<UnityFragment> {
 
                       // Text
                       const Text(
-                        "Unity",
+                        "Unit",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
@@ -434,15 +516,13 @@ class _UnityFragmentState extends State<UnityFragment> {
 
                   MyNewPinkButton(
                       width: 200,
-                      title: "+ New Unity",
+                      title: "+ New Unit",
                       onPressFunction: _showDialog,
                   ),
 
                 ],
               ),
             ),
-
-
 
             // Divider line
             Container( // Make it take the full width
@@ -453,111 +533,176 @@ class _UnityFragmentState extends State<UnityFragment> {
             ),
 
 
-            const SizedBox(height: 20,),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 120,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
-            // Search Box
-            Container(
-              width: 500,
-              height: 50,
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(30)
-              ),
-              child: TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: "Search",
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Icon(Icons.search),
+                      const SizedBox(height: 20,),
+
+                      // Search Box
+                      Container(
+                        width: 500,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(30)
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "Search",
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(Icons.search),
+                            ),
+                          ),
+                        ),
+                      ),
+
+
+                      const SizedBox(height: 20,),
+
+
+                      //  tables
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Unit", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("SQM", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Beds", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Baths", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Price", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Status", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
+                            ],
+                            rows: filteredUnits.isEmpty
+                                ? [
+                              const DataRow(
+                                cells: [
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell(
+                                    Center(
+                                      child: Text(
+                                        'Empty Roles Data',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                  DataCell.empty,
+                                ],
+                              ),
+                            ]
+                                : List<DataRow>.generate(
+                              filteredUnits.length,
+                                  (index) {
+                                final unity = filteredUnits[index];
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text('${id++}')),
+                                    DataCell(Text(unity.name)),
+                                    DataCell(Text(propertyName(unity.property_id))),
+                                    DataCell(Text(unity.sqm)),
+                                    DataCell(Text(unity.beds)),
+                                    DataCell(Text(unity.baths)),
+                                    DataCell(Text('Tzs ${unity.formatPrice}')),
+                                    DataCell(
+                                        Row(
+                                          children: [
+                                            // Dot
+                                            Container(
+                                              width: 8,
+                                              height: 8,
+                                              decoration: BoxDecoration(
+                                                color: unity.status == 'taken' ? CupertinoColors.activeGreen : (unity.status == 'pending' ? CupertinoColors.systemYellow : CupertinoColors.destructiveRed),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                            ),
+
+                                            const SizedBox(width: 10),
+
+                                            // Text
+                                            Text(
+                                              // unity.status == 'taken' ? 'Taken' : 'Not-Taken',
+                                              unity.status == 'taken' ? 'Taken' : (unity.status == 'pending' ? 'Pending' : 'Not-Taken'),
+                                              style: TextStyle(
+                                                color: unity.status == 'taken' ? CupertinoColors.activeGreen : (unity.status == 'pending' ? CupertinoColors.systemYellow : CupertinoColors.destructiveRed),
+                                              ),
+                                            ),
+
+                                          ],
+                                        )
+                                    ),
+                                    DataCell(Text(unity.timeAgo)),
+                                    DataCell(Row(
+                                      children: [
+                                        // view btn
+                                        IconButton(
+                                          onPressed: () => viewUnityData(unity.id),
+                                          icon: const Icon(Icons.remove_red_eye),
+                                          color: CupertinoColors.systemBlue,
+                                        ),
+
+                                        // update btn
+                                        IconButton(
+                                          onPressed: () => showUpdateUnity(unity.id),
+                                          icon: const Icon(Icons.mode_edit_outline),
+                                          color: CupertinoColors.systemGreen,
+                                        ),
+
+                                        // delete btn
+                                        IconButton(
+                                          onPressed: () => _deleteUnity(unity.id),
+                                          icon: const Icon(Icons.delete),
+                                          color: Colors.redAccent,
+                                        ),
+                                      ],
+                                    )),
+                                  ],
+                                );
+                              },
+                            ),
+
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 50,),
+
+                    ],
                   ),
                 ),
               ),
             ),
-
-
-            const SizedBox(height: 20,),
-
-
-            //  tables
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Unity", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Property Name", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("SQM", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Beds", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Baths", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Price", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Created_at", style: TextStyle(fontWeight: FontWeight.bold),)),
-                      DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold),)),
-                    ],
-                    rows: [
-                      if(unities.isNotEmpty)
-                        for(var unity in unities)
-                          DataRow(cells: [
-                            DataCell(Text('${id++}')),
-                            DataCell(Text(unity.name)),
-                            DataCell(Text(propertyName(unity.property_id))),
-                            DataCell(Text(unity.sqm)),
-                            DataCell(Text(unity.beds)),
-                            DataCell(Text(unity.baths)),
-                            DataCell(Text('Tzs ${unity.formatPrice}')),
-                            DataCell(Text(unity.timeAgo)),
-                            DataCell(Row(
-                              children: [
-                                // view btn
-                                IconButton(
-                                  onPressed: () => viewUnityData(unity.id),
-                                  icon: const Icon(Icons.remove_red_eye),
-                                  color: CupertinoColors.systemBlue,
-                                ),
-
-                                // update btn
-                                IconButton(
-                                  onPressed: () => showUpdateUnity(unity.id),
-                                  icon: const Icon(Icons.mode_edit_outline),
-                                  color: CupertinoColors.systemGreen,
-                                ),
-
-                                // delete btn
-                                IconButton(
-                                  onPressed: () => _deleteUnity(unity.id),
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.redAccent,
-                                ),
-                              ],
-                            )),
-                          ])
-                      else
-                        const DataRow(cells: [
-                          DataCell(Text('')),
-                          DataCell(Text('')),
-                          DataCell(Text('')),
-                          DataCell(Text('')),
-                          DataCell(Center(child: Text('Empty Unity', style: TextStyle(color: Colors.red),))),
-                          DataCell(Text('')),
-                          DataCell(Text('')),
-                          DataCell(Text('')),
-                          DataCell(Text('')),
-                        ]
-                      )
-                    ]
-                ),
-              ),
-            ),
-
-
 
           ],
         ),
@@ -618,11 +763,11 @@ class _MyCreateNewDialogState extends State<MyCreateNewDialog> {
         setState(() {
           widget.fetchUnities();
         });
-        showSuccessMsg(context, "Unity Created Successfully");
+        showSuccessMsg(context, "Unit Created Successfully");
       }else if(response.statusCode == 400){
-        showErrorMsg(context, "Unity Name Already Taken, Use Another");
+        showErrorMsg(context, "Unit Name Already Taken, Use Another Name");
       }else{
-        showErrorMsg(context, "Unity Created Unsuccessfully ${response.body}");
+        showErrorMsg(context, "Unit Created Unsuccessfully ${response.body}");
       }
     }
   }
@@ -691,14 +836,14 @@ class _MyCreateNewDialogState extends State<MyCreateNewDialog> {
                             _buildTextField(
                                 context,
                                 _NameController,
-                                'Unity Name',
+                                'Unit Name',
                                 MediaQuery.of(context).size.width * 0.31
                             ),
 
                             _buildTextField(
                                 context,
                                 _BedsController,
-                                'Unity beds',
+                                'Unit beds',
                                 MediaQuery.of(context).size.width * 0.31
                             ),
 
@@ -715,14 +860,14 @@ class _MyCreateNewDialogState extends State<MyCreateNewDialog> {
                             _buildTextField(
                                 context,
                                 _BathsController,
-                                'Unity Baths',
+                                'Unit Baths',
                                 MediaQuery.of(context).size.width * 0.31
                             ),
 
                             _buildTextField(
                                 context,
                                 _PriceController,
-                                'Unity Price',
+                                'Unit Price',
                                 MediaQuery.of(context).size.width * 0.31
                             ),
 
@@ -739,7 +884,7 @@ class _MyCreateNewDialogState extends State<MyCreateNewDialog> {
                             _buildTextField(
                                 context,
                                 _SqmController,
-                                'Unity SQM',
+                                'Unit SQM',
                                 MediaQuery.of(context).size.width * 0.31
                             ),
 

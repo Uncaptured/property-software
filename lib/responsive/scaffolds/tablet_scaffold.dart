@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
+import 'package:flutter_real_estate/fragments/admin_fragment.dart';
 import 'package:flutter_real_estate/fragments/collections_fragment.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/lease_fragment.dart';
 import 'package:flutter_real_estate/fragments/maintenance_fragment.dart';
 import 'package:flutter_real_estate/fragments/profile_fragment.dart';
 import 'package:flutter_real_estate/fragments/property_fragment.dart';
+import 'package:flutter_real_estate/fragments/role_fragment.dart';
 import 'package:flutter_real_estate/fragments/settings_fragment.dart';
 import 'package:flutter_real_estate/fragments/tenant_fragment.dart';
 import 'package:flutter_real_estate/fragments/unity_fragment.dart';
@@ -47,12 +49,14 @@ class _TabletScaffoldState extends State<TabletScaffold> {
         },
       ),
       PropertyFragment(),
-      UnityFragment(),
+      const UnityFragment(),
       TenantFragment(),
       LeaseFragment(),
       CollectionFragment(),
       MaintenanceFragment(),
       UserFragment(),
+      AdminFragment(),
+      RoleFragment(),
       SettingsFragment(),
       ProfileFragment()
     ];
@@ -147,9 +151,17 @@ class _TabletScaffoldState extends State<TabletScaffold> {
                   ),
 
                   _buildDrawerItem(
+                      icon: Icons.person_add_alt_rounded,
+                      text: 'Admins',
+                      index: 8,
+                      context: context
+                  ),
+
+
+                  _buildDrawerItem(
                       icon: Icons.account_tree,
                       text: 'Roles',
-                      index: 8,
+                      index: 9,
                       context: context
                   ),
 
@@ -160,14 +172,14 @@ class _TabletScaffoldState extends State<TabletScaffold> {
                  _buildDrawerItem(
                      icon: Icons.settings,
                      text: 'Setting',
-                     index: 9,
+                     index: 10,
                      context: context
                  ),
 
                  _buildDrawerItem(
                      icon: Icons.account_circle,
                      text: 'Profile',
-                     index: 10,
+                     index: 11,
                      context: context
                  ),
 

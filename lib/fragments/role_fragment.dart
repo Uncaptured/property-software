@@ -18,6 +18,7 @@ class RoleFragment extends StatefulWidget {
 class _RoleFragmentState extends State<RoleFragment> {
   List<Roles> roles = [];
   bool isLoading = true;
+  List<Roles> filteredRoles = [];
 
   final TextEditingController searchController = TextEditingController();
   final RolesService rolesService = RolesService();
@@ -26,16 +27,18 @@ class _RoleFragmentState extends State<RoleFragment> {
   void initState() {
     super.initState();
     _fetchRoles();
+    searchController.addListener(_filterRoles);  // Listen for changes in the search box
   }
 
   Future<void> _fetchRoles() async {
-    try{
+    try {
       List<Roles> fetchedRoles = await rolesService.getAllRoles();
       setState(() {
         roles = fetchedRoles;
+        filteredRoles = fetchedRoles;  // Set filteredRoles to the fetched roles initially
         isLoading = false;
       });
-    } catch(e){
+    } catch (e) {
       showErrorMsg(context, "Error: $e");
       setState(() {
         isLoading = false;
@@ -44,8 +47,22 @@ class _RoleFragmentState extends State<RoleFragment> {
   }
 
 
+  void _filterRoles() {
+    setState(() {
+      if (searchController.text.isEmpty) {
+        filteredRoles = roles;  // Show all users if the search field is empty
+      } else {
+        final query = searchController.text.toLowerCase();
+        filteredRoles = roles.where((role) {
+          return role.name.toLowerCase().contains(query.toLowerCase()) ||
+              role.description.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
+
   Future<void> deleteRole(int roleId) async {
-    // Show loading indicator
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -250,6 +267,7 @@ class _RoleFragmentState extends State<RoleFragment> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
 
@@ -327,7 +345,6 @@ class _RoleFragmentState extends State<RoleFragment> {
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(30),
               ),
-
               child: TextField(
                 controller: searchController,
                 decoration: const InputDecoration(
@@ -339,8 +356,8 @@ class _RoleFragmentState extends State<RoleFragment> {
                   ),
                 ),
               ),
-
             ),
+
 
             const SizedBox(height: 20),
 
@@ -356,42 +373,69 @@ class _RoleFragmentState extends State<RoleFragment> {
                 ),
                 child: DataTable(
                   columns: const [
-                    DataColumn(label: Text("#",style: TextStyle(fontWeight: FontWeight.bold),),),
-                    DataColumn(label: Text("Role Name",style: TextStyle(fontWeight: FontWeight.bold),),),
-                    DataColumn(label: Text("Description",style: TextStyle(fontWeight: FontWeight.bold),),),
-                    DataColumn(label: Text("Created At",style: TextStyle(fontWeight: FontWeight.bold),),),
-                    DataColumn(label: Text("Actions",style: TextStyle(fontWeight: FontWeight.bold),),),
+                    DataColumn(label: Text("#", style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text("Role Name", style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text("Description", style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text("Created At", style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataColumn(label: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold))),
                   ],
-                  rows: [
-                    for(var role in roles)
-                      DataRow(cells: [
-                        DataCell(Text('${id++}')),
-                        DataCell(Text(role.name)),
-                        DataCell(Text(role.description)),
-                        DataCell(Text(role.timeAgo)),
+                  rows: filteredRoles.isEmpty ? [
+                    const DataRow(
+                      cells: [
+                        DataCell.empty,
+                        DataCell.empty,
+                        DataCell.empty,
+                        DataCell.empty,
                         DataCell(
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () => showRole(role.id),
-                                icon: const Icon(Icons.remove_red_eye),
-                                color: CupertinoColors.systemBlue,
+                          Center(
+                            child: Text(
+                              'Empty Roles Data',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
                               ),
-                              IconButton(
-                                onPressed: () => showUpdateRole(role.id),
-                                icon: const Icon(Icons.mode_edit_outline),
-                                color: CupertinoColors.systemGreen,
-                              ),
-                              IconButton(
-                                onPressed: () => deleteRole(role.id),
-                                icon: const Icon(Icons.delete),
-                                color: Colors.redAccent,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ]),
-                  ],
+                      ],
+                    ),
+                  ]
+                      : List<DataRow>.generate(
+                    filteredRoles.length,
+                        (index) {
+                      final role = filteredRoles[index];
+                      return DataRow(
+                        cells: [
+                          DataCell(Text('${index + 1}')),
+                          DataCell(Text(role.name)),
+                          DataCell(Text(role.description)),
+                          DataCell(Text(role.timeAgo)),
+                          DataCell(
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () => showRole(role.id),
+                                  icon: const Icon(Icons.remove_red_eye),
+                                  color: CupertinoColors.systemBlue,
+                                ),
+                                IconButton(
+                                  onPressed: () => showUpdateRole(role.id),
+                                  icon: const Icon(Icons.mode_edit_outline),
+                                  color: CupertinoColors.systemGreen,
+                                ),
+                                IconButton(
+                                  onPressed: () => deleteRole(role.id),
+                                  icon: const Icon(Icons.delete),
+                                  color: Colors.redAccent,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             )

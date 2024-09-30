@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
+import 'package:flutter_real_estate/fragments/admin_fragment.dart';
 import 'package:flutter_real_estate/fragments/collections_fragment.dart';
 import 'package:flutter_real_estate/fragments/dashboard_fragment.dart';
 import 'package:flutter_real_estate/fragments/lease_fragment.dart';
@@ -38,6 +39,7 @@ class _MinTabletScaffoldState extends State<MinTabletScaffold> {
       CollectionFragment(),
       MaintenanceFragment(),
       UserFragment(),
+      AdminFragment(),
       RoleFragment(),
       SettingsFragment(),
       ProfileFragment()
@@ -155,10 +157,18 @@ class _MinTabletScaffoldState extends State<MinTabletScaffold> {
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.person_add_alt_rounded, color: Colors.grey.shade400,),
+                    title: Text('Admins', style: TextStyle(color: Colors.grey.shade300)),
+                    onTap: () {
+                      _selectPage(8);
+                      Navigator.pop(context); // Close the drawer
+                    },
+                  ),
+                  ListTile(
                     leading: Icon(Icons.account_tree, color: Colors.grey.shade400,),
                     title: Text('Roles', style: TextStyle(color: Colors.grey.shade300)),
                     onTap: () {
-                      _selectPage(8);
+                      _selectPage(9);
                       Navigator.pop(context); // Close the drawer
                     },
                   ),
@@ -170,7 +180,7 @@ class _MinTabletScaffoldState extends State<MinTabletScaffold> {
               leading: Icon(Icons.settings, color: Colors.grey.shade400,),
               title: Text('Settings', style: TextStyle(color: Colors.grey.shade300)),
               onTap: () {
-                _selectPage(9);
+                _selectPage(10);
                 Navigator.pop(context); // Close the drawer
               },
             ),
@@ -179,7 +189,7 @@ class _MinTabletScaffoldState extends State<MinTabletScaffold> {
               leading: Icon(Icons.account_circle, color: Colors.grey.shade400,),
               title: Text('Profile', style: TextStyle(color: Colors.grey.shade300)),
               onTap: () {
-                _selectPage(10);
+                _selectPage(11);
                 Navigator.pop(context); // Close the drawer
               },
             ),

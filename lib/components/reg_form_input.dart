@@ -5,6 +5,8 @@ class MyRegFormInput extends StatelessWidget {
   final TextEditingController controller;
   final bool isPassword;
   final String title;
+  final IconData? suffixIcon;
+  final Function()? onTapHide;
   final List<String>? options;  // Add this to pass options for dropdown
   final bool isDropdown;  // Flag to identify if it's a dropdown
 
@@ -13,6 +15,8 @@ class MyRegFormInput extends StatelessWidget {
     required this.controller,
     required this.isPassword,
     required this.title,
+    this.suffixIcon,
+    this.onTapHide,
     this.options,
     this.isDropdown = false,
   });
@@ -50,6 +54,15 @@ class MyRegFormInput extends StatelessWidget {
         obscureText: isPassword,
         decoration: InputDecoration(
           hintText: title,
+          suffixIcon: suffixIcon != null ?
+          GestureDetector(
+            onTap: onTapHide,
+            child: Icon(
+              suffixIcon!,
+              color: Colors.grey,
+            ),
+          )
+              : null,
           border: InputBorder.none,
         ),
       ),

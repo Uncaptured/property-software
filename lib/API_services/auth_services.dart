@@ -75,7 +75,6 @@ class AuthApiService {
       },
     );
 
-    // Delete the token if logout is successful
     if (response.statusCode == 200) {
       await storage.delete(key: 'auth_token');
     }

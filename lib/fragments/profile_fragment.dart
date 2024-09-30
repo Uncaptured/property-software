@@ -2,13 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_real_estate/API_services/auth_services.dart';
-import 'package:flutter_real_estate/components/form_input.dart';
 import 'package:flutter_real_estate/components/form_update_password.dart';
 import 'package:flutter_real_estate/components/notification.dart';
-import 'package:flutter_real_estate/components/pink_new_button.dart';
 import 'package:flutter_real_estate/constants.dart';
 import 'package:flutter_real_estate/pages/auth/login_page.dart';
-import 'package:get/get.dart';
 import '../components/form_update_form_details.dart';
 import '../models/auth_user.dart';
 
@@ -23,13 +20,20 @@ class _ProfileFragmentState extends State<ProfileFragment> {
   final AuthUser user = AuthUser();
   final AuthApiService authApi = AuthApiService();
 
-  Future<void> _updateUserData(int userId, String fname, String lname, String email, String phone) async {
-    setState(() {
-      const Center(
-        child: CircularProgressIndicator(),
-      );
-    });
+  void isLoadingState(){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.white,),
+          );
+        }
+    );
+  }
 
+  Future<void> _updateUserData(int userId, String fname, String lname, String email, String phone) async {
+    isLoadingState();
     if(userId.isNaN || fname.isEmpty || lname.isEmpty || email.isEmpty || phone.isEmpty){
         Navigator.pop(context);
         showErrorMsg(context, "All Fields are Required");
@@ -44,8 +48,9 @@ class _ProfileFragmentState extends State<ProfileFragment> {
       });
 
       if(response.statusCode == 200){
+        Navigator.pop(context);
         setState(() {
-          // rebuild of the widgets
+          // refresh the widget
         });
         user.updateFromJson({
           'id': userId,
@@ -54,7 +59,6 @@ class _ProfileFragmentState extends State<ProfileFragment> {
           'email': email,
           'phone': phone,
         });
-
         showSuccessMsg(context, "Profile Details Updated Successfully");
       }else{
         showErrorMsg(context, "Profile Details Not-Updated");
@@ -62,18 +66,18 @@ class _ProfileFragmentState extends State<ProfileFragment> {
 
     }
   }
-  
-  Future<void> _userLogout() async {
-    setState(() {
-      const Center(
-        child: CircularProgressIndicator(),
-      );
-    });
 
+
+  Future<void> _userLogout() async {
+    isLoadingState();
     final response = await authApi.logoutUser();
-    
     if(response.statusCode == 200){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()
+          )
+      );
     }
   }
 
@@ -151,7 +155,8 @@ class _ProfileFragmentState extends State<ProfileFragment> {
               const SizedBox(height: 30,),
 
               Container(
-                padding: const EdgeInsets.all(18),
+                width: MediaQuery.of(context).size.width / 2.2,
+                padding: const EdgeInsets.all(23),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -206,7 +211,8 @@ class _ProfileFragmentState extends State<ProfileFragment> {
 
 
               Container(
-                padding: EdgeInsets.all(18),
+                width: MediaQuery.of(context).size.width / 2.2,
+                padding: const EdgeInsets.all(23),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -230,7 +236,7 @@ class _ProfileFragmentState extends State<ProfileFragment> {
 
 
                     const Text(
-                      "Profile Details",
+                      "Update Password",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 19,
@@ -254,6 +260,7 @@ class _ProfileFragmentState extends State<ProfileFragment> {
 
 
               Container(
+                width: MediaQuery.of(context).size.width / 2.2,
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   color: Colors.white,

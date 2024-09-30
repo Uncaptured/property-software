@@ -1,20 +1,22 @@
-import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_real_estate/API_services/all_admin_services.dart';
+import 'package:flutter_real_estate/API_services/all_collection_services.dart';
+import 'package:flutter_real_estate/API_services/all_maintenance_services.dart';
 import 'package:flutter_real_estate/API_services/all_roles_services.dart';
 import 'package:flutter_real_estate/API_services/all_tenants_service.dart';
 import 'package:flutter_real_estate/API_services/all_unity_services.dart';
 import 'package:flutter_real_estate/API_services/all_users_services.dart';
-import 'package:flutter_real_estate/components/pink_new_button.dart';
-import 'package:flutter_real_estate/constants.dart';
+import 'package:flutter_real_estate/models/all_maintenance_model.dart';
 import 'package:flutter_real_estate/models/all_tenants_model.dart';
 import 'package:flutter_real_estate/models/all_units_model.dart';
 import 'package:flutter_real_estate/models/all_users_model.dart';
 import 'package:flutter_real_estate/models/roles_model.dart';
+import '../API_services/all_lease_services.dart';
 import '../components/notification.dart';
+import '../models/all_admins_model.dart';
+import '../models/all_collection_model.dart';
+import '../models/all_lease_model.dart';
 import '../models/auth_user.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/all_property_model.dart';
 import '../API_services/all_properties_services.dart';
 
@@ -34,16 +36,26 @@ class DashboardFragment extends StatefulWidget {
 class _DashboardFragmentState extends State<DashboardFragment> {
   final AuthUser user = AuthUser();
   bool isLoading = true;
+
   List<AllPropertyModel> properties = [];
   List<AllUnityModel> unities = [];
   List<AllUsersModel> users = [];
   List<Roles> roles = [];
   List<AllTenantsModel> tenants = [];
+  List<AllMaintenanceModel> maintenances = [];
+  List<AllLeaseModel> leases = [];
+  List<AllCollectionModel> collections = [];
+  List<AllAdminsModel> admins = [];
+
   late AllPropertyService allPropertyService = AllPropertyService();
   late AllUnityServices allUnityServices = AllUnityServices();
   late AllUsersService allUsersService = AllUsersService();
+  late AllAdminsService allAdminsService = AllAdminsService();
   late RolesService rolesService = RolesService();
   late AllTenantsService allTenantsService = AllTenantsService();
+  late AllLeaseService allLeaseService = AllLeaseService();
+  late AllMaintenanceService allMaintenanceService = AllMaintenanceService();
+  late AllCollectionService allCollectionService = AllCollectionService();
 
   @override
   void initState() {
@@ -58,12 +70,23 @@ class _DashboardFragmentState extends State<DashboardFragment> {
       List<AllUsersModel> allUsers = await allUsersService.getAllUsers();
       List<Roles> allRoles = await rolesService.getAllRoles();
       List<AllTenantsModel> allTenants = await allTenantsService.getAllTenants();
+      List<AllLeaseModel> allLeases = await allLeaseService.getAllLease();
+      List<AllAdminsModel> allAdmins = await allAdminsService.getAllAdmins();
+      List<AllMaintenanceModel> allMaintenance = await allMaintenanceService.getAllMaintenance();
+      List<AllCollectionModel> allCollections  = await allCollectionService.getAllCollection();
+
+
       setState(() {
         properties = allProperty;
         unities = allUnity;
         users = allUsers;
         roles = allRoles;
         tenants = allTenants;
+        leases = allLeases;
+        maintenances = allMaintenance;
+        collections = allCollections;
+        admins = allAdmins;
+
         isLoading = false;
       });
     } catch (e) {
@@ -145,12 +168,42 @@ class _DashboardFragmentState extends State<DashboardFragment> {
                   count: users.length,
                   onTapFunction: () => widget.onSelectPage(7),
                 ),
+
                 Dashboardinks(
                   icon: Icons.account_tree,
                   title: "Roles",
                   count: users.length,
                   onTapFunction: () => widget.onSelectPage(8),
                 ),
+
+                Dashboardinks(
+                  icon: Icons.insert_drive_file_sharp,
+                  title: "Lease",
+                  count: leases.length,
+                  onTapFunction: () => widget.onSelectPage(4),
+                ),
+
+                Dashboardinks(
+                  icon: Icons.monetization_on,
+                  title: "Collection",
+                  count: collections.length,
+                  onTapFunction: () => widget.onSelectPage(5),
+                ),
+
+                Dashboardinks(
+                  icon: Icons.build,
+                  title: "Maintenance",
+                  count: maintenances.length,
+                  onTapFunction: () => widget.onSelectPage(6),
+                ),
+
+                Dashboardinks(
+                  icon: Icons.person_add_alt_rounded,
+                  title: "Admins",
+                  count: admins.length,
+                  onTapFunction: () => widget.onSelectPage(8),
+                ),
+
               ],
             ),
           ],
@@ -159,6 +212,8 @@ class _DashboardFragmentState extends State<DashboardFragment> {
     );
   }
 }
+
+
 
 
 
